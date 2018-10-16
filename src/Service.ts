@@ -61,8 +61,8 @@ export default class Service {
 
   public async start() {
 
-    const command = this.config.command + ' 2>&1 >> ' + this.logFile
-    const child = cp.spawn('bash', ['-c', command], {
+    const command = this.config.command + ' 2>&1 | tee -a ' + this.logFile
+    const child = cp.spawn('screen', ['-d', '-m', '-t', this.name, 'bash', '-c', command], {
       cwd: this.config.workDir,
       env: {
         ...process.env,

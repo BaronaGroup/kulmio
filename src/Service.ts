@@ -28,6 +28,10 @@ export default class Service {
     return this.config.name
   }
 
+  get screenName() {
+    return 'server-' + this.name
+  }
+
   private get pidFile() {
     return this.serverConfig.baseDir + '/pids/' + this.config.name + '.pid'
   }
@@ -62,7 +66,7 @@ export default class Service {
   public async start() {
 
     const command = this.config.command + ' 2>&1 | tee -a ' + this.logFile
-    const child = cp.spawn('screen', ['-d', '-m', '-t', this.name, 'bash', '-c', command], {
+    const child = cp.spawn('screen', ['-D', '-m', '-S', this.screenName, 'bash', '-c', command], {
       cwd: this.config.workDir,
       env: {
         ...process.env,

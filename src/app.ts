@@ -31,6 +31,10 @@ async function run() {
       await logs(commandLineArgs.args, services)
       break
     }
+    case 'screen': {
+      await openScreen(services)
+      break
+    }
     default:
       console.log('Invalid command', commandLineArgs.command)
   }
@@ -66,7 +70,7 @@ function parseCommandLine() {
 async function serviceStatus(services: Service[]) {
   const statuses = services.map(service => ({service, status: service.getStatus()}))
   for (const {service, status} of statuses) {
-    console.log(service.name, await status)
+    console.log(service.name, await status, await service.getPid())
   }
 }
 
@@ -100,4 +104,12 @@ function getServices(model: ServerModel, serviceNames: string[]) {
 async function logs(args: string[], services: Service[]) {
   const logfiles = services.map(service => service.logFile)
   cp.execSync('tail ' + args.join(' ') + ' -- ' + logfiles.join(' '), {stdio: 'inherit'})
+}
+
+async function openScreen(services: Service[]) {
+  if (services.length !== 1) {
+    console.error('Screen is only applicable for a single service')
+    return
+  }
+  cp.execSync('screen -raAd ' + services[0].screenName, { stdio: 'inherit'})
 }

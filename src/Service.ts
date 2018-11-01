@@ -29,7 +29,7 @@ export default class Service {
   }
 
   get screenName() {
-    return 'server-' + this.name
+    return 'server-' + this.name + '.srv'
   }
 
   private get pidFile() {
@@ -82,13 +82,31 @@ export default class Service {
 
   public async stop(force: boolean) {
     const pid = await this.getPid()
+    if (force) throw new Error('Force not supported at this time')
     if (pid) {
-      cp.execSync(`kill ${force ? '-9' : ''} ${pid}`)
+      // cp.execSync(`screen -XS ${this.screenName} quit`)
+      killChildren(pid)
+      kill(pid)
       while (await this.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, 100))
       }
       fs.writeFileSync(this.pidFile, '', 'UTF-8')
       console.log('Stopped ' + this.name)
+    }
+
+    function kill(pid: number) {
+      cp.execSync(`kill -- -${pid}`)
+    }
+
+    function killChildren(pid: number) {
+      for (const childPid of findChildren(pid)) {
+        killChildren(childPid)
+        kill(childPid)
+      }
+    }
+
+    function findChildren(pid: number) {
+      return cp.execSync(`pgrep -P ${pid}`).toString('utf-8').split('\n').map(l => parseInt(l))
     }
   }
 
@@ -99,6 +117,7 @@ export default class Service {
 
     return {
       ... loadEnvFromFile(envDir + '/global.env'),
+      ... loadEnvFromFiles(this.serverConfig.envFiles || []),
       ... loadEnvFromFile(envDir + '/' + this.config.name + '.env'),
       ... loadEnvFromFiles(this.config.envFiles || []),
       ... this.config.env || {},

@@ -14,9 +14,17 @@ async function run() {
       await serviceStatus(services)
       break
     }
+    case 'build': {
+      await buildServices(services)
+      break
+    }
     case 'start': {
       await startServices(services)
       break
+    }
+    case 'run': {
+      await startServices(services)
+      await openScreen(services)
     }
     case 'stop': {
       await stopServices(commandLineArgs.args, services)
@@ -82,6 +90,15 @@ async function startServices(services: Service[]) {
     } else {
       console.log(service.name + ': Starting...')
       await service.start()
+    }
+  }
+}
+
+async function buildServices(services: Service[]) {
+  for (let service of services) {
+    await service.build()
+    if (await service.isRunning()) {
+      await service.restart()
     }
   }
 }

@@ -10,6 +10,7 @@ interface EnvObject {
 export interface ServiceConfig {
   name: string
   command: string
+  build?: string
   workDir: string
   env?: EnvObject
   envFiles?: string[]
@@ -63,8 +64,20 @@ export default class Service {
     return (await this.getPid()) !== null
   }
 
-  public async start() {
+  public async build() {
+    const command = this.config.build
+    if (!command) return
+    cp.execSync(command, {
+      cwd: this.config.workDir,
+      env: {
+        ...process.env,
+        ...this.getEnvVariables(),
+      },
+      stdio: 'inherit'
+    })
+  }
 
+  public async start() {
     const command = this.config.command + ' 2>&1 | tee -a ' + this.logFile
     const child = cp.spawn('screen', ['-D', '-m', '-S', this.screenName, 'bash', '-c', command], {
       cwd: this.config.workDir,
@@ -85,8 +98,7 @@ export default class Service {
     if (force) throw new Error('Force not supported at this time')
     if (pid) {
       // cp.execSync(`screen -XS ${this.screenName} quit`)
-      killChildren(pid)
-      kill(pid)
+      killMany([pid, ...getChildren(pid)])
       while (await this.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, 100))
       }
@@ -94,20 +106,32 @@ export default class Service {
       console.log('Stopped ' + this.name)
     }
 
-    function kill(pid: number) {
-      cp.execSync(`kill -- -${pid}`)
+    function killMany(pids: number[]) {
+      cp.execSync(`kill -- ${pids.join(' ')}`)
     }
 
-    function killChildren(pid: number) {
+    function* getChildren(pid: number): IterableIterator<number> {
       for (const childPid of findChildren(pid)) {
-        killChildren(childPid)
-        kill(childPid)
+        yield* getChildren(childPid)
+        yield(childPid)
       }
     }
 
     function findChildren(pid: number) {
-      return cp.execSync(`pgrep -P ${pid}`).toString('utf-8').split('\n').map(l => parseInt(l))
+      try {
+        const a = cp.execSync(`pgrep -P ${pid}`).toString('utf-8').split('\n').filter(x => x)
+        return a.map(l => parseInt(l))
+      } catch(err) {
+        return []
+      }
     }
+  }
+
+  public async restart() {
+    if (await this.isRunning()) {
+      await this.stop(false)
+    }
+    await this.start()
   }
 
   private getEnvVariables(): EnvObject {

@@ -61,8 +61,8 @@ Stops services
 
 Restarts services 
 
-    kulmio stop service 
-    kulmio stop service1 service2 service3
+    kulmio restart service 
+    kulmio restart service1 service2 service3
     
 ### logs
 

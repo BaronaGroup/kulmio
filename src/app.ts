@@ -2,6 +2,12 @@ import ServerModel from './ServerModel'
 import Service from './Service'
 import cp from 'child_process'
 
+const validCommands = /status|build|start|run|stop|restart|logs|screen/i
+
+function isValidCommand(potential: string) {
+  return validCommands.test(potential)
+}
+
 async function run() {
   //var wtf = require('wtfnode');
   const commandLineArgs = parseCommandLine()
@@ -56,7 +62,11 @@ run().catch(err => {
 })
 
 function parseCommandLine() {
-  const [, , configFile, ...rest] = process.argv
+  let [, , configFile, ...rest] = process.argv
+  if (isValidCommand(configFile) && process.env['KULMIO_CONFIG']) {
+    rest.unshift(configFile)
+    configFile = process.env['KULMIO_CONFIG'] as string
+  }
   const command = rest.shift() || ''
   let args: string[], services: string[]
   if (rest.includes('--')) {

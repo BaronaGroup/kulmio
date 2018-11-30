@@ -153,13 +153,18 @@ export default class Service {
 
     function loadEnvFromFile(filename: string) {
       const fullName = path.resolve(baseDir, filename)
+      const dirname = path.dirname(fullName)
       if (!fs.existsSync(fullName)) return {}
       const data = fs.readFileSync(fullName, 'UTF-8')
       const vars = data.split(/[\r\n]+/)
         .map(l => l.trim())
         .filter(s => !!s)
         .map(e => {
-          return (e.match(/^(.+?)=(.+)$/) || []).slice(1)
+          let [key, value]= (e.match(/^(.+?)=(.+)$/) || []).slice(1)
+          if (value) {
+            value = value.replace(/__DIRNAME__/g, dirname)
+          }
+          return [key, value]
         })
 
       return vars.reduce((memo, [key, val]) => ({...memo, [key]: val}), {})

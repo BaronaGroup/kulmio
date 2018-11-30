@@ -12,6 +12,7 @@
     "typescript": "^3.2.1"
   },
   "scripts": {
-    "build": "tsc --project tsconfig.json"
+    "build": "tsc --project tsconfig.json",
+    "release": "git checkout release && git merge master && npm run build && git add build && git commit -m 'Release' && git push && git checkout -"
   }
 }

@@ -139,11 +139,14 @@ export default class Service {
     const baseDir = this.serverConfig.baseDir
     const envDir = baseDir + '/envs'
 
+    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/${this.config.name}.env`)).reduce(reducerCombineEnvs)
+
     return {
       ... loadEnvFromFile(envDir + '/global.env'),
       ... loadEnvFromFiles(this.serverConfig.envFiles || []),
       ... loadEnvFromFile(envDir + '/' + this.config.name + '.env'),
       ... loadEnvFromFiles(this.config.envFiles || []),
+      ... envsFromDirectories,
       ... this.config.env || {},
     }
 
@@ -163,7 +166,12 @@ export default class Service {
 
     function loadEnvFromFiles(files: string[]) {
       return files.map(loadEnvFromFile)
-        .reduce((memo, additions) => ({...memo, ...additions}), {})
+        .reduce(reducerCombineEnvs, {})
     }
+
+    function reducerCombineEnvs(memo: any, additions: any) {
+      return ({...memo, ...additions})
+    }
+
   }
 }

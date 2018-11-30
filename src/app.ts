@@ -25,6 +25,7 @@ async function run() {
     case 'run': {
       await startServices(services)
       await openScreen(services)
+      break
     }
     case 'stop': {
       await stopServices(commandLineArgs.args, services)
@@ -115,7 +116,10 @@ async function stopServices(args: string[], services: Service[]) {
 }
 
 function getServices(model: ServerModel, serviceNames: string[]) {
-  return model.services.filter(service => serviceNames.length ? serviceNames.includes(service.name) : true)
+  const foundServices = model.services.filter(service => serviceNames.length ? serviceNames.includes(service.name) : true)
+  const missingServices = serviceNames.filter(sn => foundServices.every(found => found.name !== sn))
+  if (missingServices.length) throw new Error('No such services services: ' + missingServices.join(' '))
+  return foundServices
 }
 
 async function logs(args: string[], services: Service[]) {

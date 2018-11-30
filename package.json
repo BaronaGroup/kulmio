@@ -1,8 +1,7 @@
 {
-  "name": "server",
+  "name": "kulmio",
   "version": "0.0.1",
   "dependencies": {
-    "lodash": "^4.17.11",
     "wtfnode": "^0.7.1"
   },
   "devDependencies": {

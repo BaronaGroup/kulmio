@@ -16,10 +16,10 @@
       "es2017",
       "dom"
     ],
-    "module": "commonjs"
+    "module": "commonjs",
+    "outDir": "build"
   },
   "include": [
-    "server/**/*",
-    "test/**/*"
+    "src"
   ]
 }

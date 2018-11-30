@@ -14,6 +14,7 @@ export interface ServiceConfig {
   workDir: string
   env?: EnvObject
   envFiles?: string[]
+  screenSuffix?: string
 }
 
 export default class Service {
@@ -30,7 +31,7 @@ export default class Service {
   }
 
   get screenName() {
-    return 'server-' + this.name + '.srv'
+    return 'server-' + this.name + '.' + (this.config.screenSuffix || this.serverConfig.screenSuffix || 'kulmio')
   }
 
   private get pidFile() {

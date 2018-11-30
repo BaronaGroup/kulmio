@@ -13,6 +13,10 @@ If environment variable KULMIO_CONFIG is set, you do not need to be explicit abo
 
 - nodejs
 - pgrep
+
+## Installing
+
+    npm i -g git+ssh://git@gitlab.baronatechnologies.fi/public-repositories/kulmio#release
     
 ## Commands
 

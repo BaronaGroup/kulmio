@@ -42,6 +42,10 @@ export default class Service {
     return this.serverConfig.baseDir + '/logs/' + this.config.name + '.log'
   }
 
+  get actualWorkDir() {
+    return path.resolve(this.serverConfig.baseDir, this.config.workDir)
+  }
+
   public async getStatus() {
     const pid = await this.getPid()
     return pid ? 'Running #' + pid : 'Stopped'
@@ -69,7 +73,7 @@ export default class Service {
     const command = this.config.build
     if (!command) return
     cp.execSync(command, {
-      cwd: this.config.workDir,
+      cwd: this.actualWorkDir,
       env: {
         ...process.env,
         ...this.getEnvVariables(),
@@ -81,7 +85,7 @@ export default class Service {
   public async start() {
     const command = this.config.command + ' 2>&1 | tee -a ' + this.logFile
     const child = cp.spawn('screen', ['-D', '-m', '-S', this.screenName, 'bash', '-c', command], {
-      cwd: this.config.workDir,
+      cwd: this.actualWorkDir,
       env: {
         ...process.env,
         ...this.getEnvVariables(),
@@ -91,7 +95,9 @@ export default class Service {
     })
     const pid = child.pid
     child.unref()
-    fs.writeFileSync(this.pidFile, pid.toString(), 'UTF-8')
+    if (pid) {
+      fs.writeFileSync(this.pidFile, pid.toString(), 'UTF-8')
+    }
   }
 
   public async stop(force: boolean) {

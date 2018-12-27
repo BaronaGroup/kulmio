@@ -146,23 +146,41 @@ export default class Service {
     const baseDir = this.serverConfig.baseDir
     const envDir = baseDir + '/envs'
 
-    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/${this.config.name}.env`)).reduce(reducerCombineEnvs)
+    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/global.env`))
+      .concat((this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/${this.config.name}.env`)))
+    const configEnv: Record<string, string> = this.config.env || {}
 
-    return {
-      ... loadEnvFromFile(envDir + '/global.env'),
-      ... loadEnvFromFiles(this.serverConfig.envFiles || []),
-      ... loadEnvFromFile(envDir + '/' + this.config.name + '.env'),
-      ... loadEnvFromFiles(this.config.envFiles || []),
-      ... envsFromDirectories,
-      ... this.config.env || {},
+    return combineEnv(
+      loadEnvFromFile(envDir + '/global.env'),
+      loadEnvFromFiles(this.serverConfig.envFiles || []),
+      loadEnvFromFile(envDir + '/' + this.config.name + '.env'),
+      loadEnvFromFiles(this.config.envFiles || []),
+      ...envsFromDirectories,
+      Object.keys(configEnv).map(key => ({key, value: configEnv[key]}))
+    )
+
+    function combineEnv(...envParts: Array<{key: string, value: string}[]>) {
+      const output: Record<string, string> = {}
+      for (const part of envParts) {
+        for (const envVar of part)
+        {
+          output[envVar.key] = envVar.value.replace(/\$(?:(\w+)|{(.+?)})/g, (_fullMatch, b, c) => {
+            const variable = b || c
+            return output[variable] || process.env[variable] || ''
+          })
+        }
+      }
+      return output
     }
 
     function loadEnvFromFile(filename: string) {
       const fullName = path.resolve(baseDir, filename)
       const dirname = path.dirname(fullName)
-      if (!fs.existsSync(fullName)) return {}
+      if (!fs.existsSync(fullName)) {
+        return []
+      }
       const data = fs.readFileSync(fullName, 'UTF-8')
-      const vars = data.split(/[\r\n]+/)
+      return data.split(/[\r\n]+/)
         .map(l => l.trim())
         .filter(s => !!s)
         .map(e => {
@@ -170,20 +188,17 @@ export default class Service {
           if (value) {
             value = value.replace(/__DIRNAME__/g, dirname)
           }
-          return [key, value]
+          return {key, value}
         })
-
-      return vars.reduce((memo, [key, val]) => ({...memo, [key]: val}), {})
+        .filter(({value}) => value !== undefined)
     }
 
     function loadEnvFromFiles(files: string[]) {
-      return files.map(loadEnvFromFile)
-        .reduce(reducerCombineEnvs, {})
+      return flatten(files.map(loadEnvFromFile))
     }
-
-    function reducerCombineEnvs(memo: any, additions: any) {
-      return ({...memo, ...additions})
-    }
-
   }
+}
+
+function flatten<T>(arrays: Array<T[]>): T[] {
+  return ([] as T[]).concat(...arrays)
 }

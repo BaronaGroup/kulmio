@@ -63,9 +63,11 @@ run().catch(err => {
 
 function parseCommandLine() {
   let [, , configFile, ...rest] = process.argv
-  if (isValidCommand(configFile) && process.env['KULMIO_CONFIG']) {
+  if ((isValidCommand(configFile) || !looksLikeConfigFile(configFile)) && process.env['KULMIO_CONFIG']) {
     rest.unshift(configFile)
     configFile = process.env['KULMIO_CONFIG'] as string
+  } else if (configFile === '--env') {
+    configFile = process.env['KULMIO_CONFIG'] || ''
   }
   if (rest.length > 1) {
     if (isValidCommand(rest[rest.length - 1]) && !isValidCommand(rest[0])) {
@@ -90,6 +92,13 @@ function parseCommandLine() {
     args,
     services
   }
+}
+
+function looksLikeConfigFile(fn: string) {
+  return fn === '--env'
+   || fn.endsWith('.json')
+   || fn.endsWith('.js')
+   || fn.includes('/')
 }
 
 async function serviceStatus(services: Service[]) {

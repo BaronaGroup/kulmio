@@ -8,6 +8,20 @@ Basic syntax:
 If environment variable KULMIO_CONFIG is set, you do not need to be explicit about the config file.
     
     kulmio command arguments
+    
+If automatic detection logic fails, you can explicitly indicate that KULMIO_CONFIG is to be usd by
+using `--env` as the configfile
+
+    kulmio --env command arguments
+    
+For convenience, command can be at the end of the command line instead of its usual location. That is,
+the following two do the same thing:
+
+    kulmio start servicename
+    kulmio servicename start
+    
+If a service name matches the name of a command, it is assumed that the command comes before
+service names. 
 
 ## Dependencies
 

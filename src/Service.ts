@@ -15,10 +15,11 @@ export interface ServiceConfig {
   env?: EnvObject
   envFiles?: string[]
   screenSuffix?: string
+  excludeFromAll?: boolean
 }
 
 export default class Service {
-  private config: ServiceConfig
+  public readonly config: ServiceConfig
   private serverConfig: ServerConfig
 
   constructor(serverConfig: ServerConfig, serviceConfig: ServiceConfig) {

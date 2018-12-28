@@ -126,6 +126,9 @@ async function stopServices(args: string[], services: Service[]) {
 }
 
 function getServices(model: ServerModel, serviceNames: string[]) {
+  if (!serviceNames.length) {
+    return model.services.filter(service => !service.config.excludeFromAll)
+  }
   const foundServices = model.services.filter(service => serviceNames.length ? serviceNames.includes(service.name) : true)
   const missingServices = serviceNames.filter(sn => foundServices.every(found => found.name !== sn))
   if (missingServices.length) throw new Error('No such services services: ' + missingServices.join(' '))

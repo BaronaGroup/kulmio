@@ -67,6 +67,12 @@ function parseCommandLine() {
     rest.unshift(configFile)
     configFile = process.env['KULMIO_CONFIG'] as string
   }
+  if (rest.length > 1) {
+    if (isValidCommand(rest[rest.length - 1]) && !isValidCommand(rest[0])) {
+      rest.unshift(rest.pop() as string)
+    }
+  }
+
   const command = rest.shift() || ''
   let args: string[], services: string[]
   if (rest.includes('--')) {

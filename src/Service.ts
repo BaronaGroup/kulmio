@@ -16,6 +16,7 @@ export interface ServiceConfig {
   envFiles?: string[]
   screenSuffix?: string
   excludeFromAll?: boolean
+  groups?: string[]
 }
 
 export default class Service {

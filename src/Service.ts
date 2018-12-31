@@ -148,16 +148,17 @@ export default class Service {
     const baseDir = this.serverConfig.baseDir
     const envDir = baseDir + '/envs'
 
-    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/global.env`))
-      .concat((this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/${this.config.name}.env`)))
+    const globalEnvs = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/global.env`))
+    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/${this.config.name}.env`))
     const configEnv: Record<string, string> = this.config.env || {}
 
     return combineEnv(
       loadEnvFromFile(envDir + '/global.env'),
+      ...globalEnvs,
       loadEnvFromFiles(this.serverConfig.envFiles || []),
       loadEnvFromFile(envDir + '/' + this.config.name + '.env'),
-      loadEnvFromFiles(this.config.envFiles || []),
       ...envsFromDirectories,
+      loadEnvFromFiles(this.config.envFiles || []),
       Object.keys(configEnv).map(key => ({key, value: configEnv[key]}))
     )
 

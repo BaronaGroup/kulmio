@@ -9,6 +9,7 @@ interface EnvObject {
 
 export interface ServiceConfig {
   name: string
+  envName?: string
   command: string
   build?: string
   workDir: string
@@ -149,14 +150,15 @@ export default class Service {
     const envDir = baseDir + '/envs'
 
     const globalEnvs = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/global.env`))
-    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/${this.config.name}.env`))
+    const envName = this.config.envName || this.config.name
+    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/${envName}.env`))
     const configEnv: Record<string, string> = this.config.env || {}
 
     return combineEnv(
       loadEnvFromFile(envDir + '/global.env'),
       ...globalEnvs,
       loadEnvFromFiles(this.serverConfig.envFiles || []),
-      loadEnvFromFile(envDir + '/' + this.config.name + '.env'),
+      loadEnvFromFile(envDir + '/' + envName + '.env'),
       ...envsFromDirectories,
       loadEnvFromFiles(this.config.envFiles || []),
       Object.keys(configEnv).map(key => ({key, value: configEnv[key]}))

@@ -50,6 +50,8 @@ async function run() {
       await openScreen(services)
       break
     }
+    case 'update-kulmio':
+      await updateKulmio()
     default:
       console.log('Invalid command', commandLineArgs.command)
   }
@@ -163,4 +165,9 @@ async function openScreen(services: Service[]) {
     return
   }
   cp.execSync('screen -raAd ' + services[0].screenName, { stdio: 'inherit'})
+}
+
+async function updateKulmio() {
+  console.log('Updating kulmio')
+  cp.execSync('npm i -g git+ssh://git@gitlab.baronatechnologies.fi/public-repositories/kulmio#release', {stdio: 'inherit'})
 }

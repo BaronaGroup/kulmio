@@ -11,6 +11,7 @@ export interface ServiceConfig {
   name: string
   envName?: string
   command: string
+  stopCommand?: string
   build?: string
   workDir: string
   env?: EnvObject
@@ -105,6 +106,21 @@ export default class Service {
   }
 
   public async stop(force: boolean) {
+    if (!force && this.config.stopCommand) {
+      cp.execSync(this.config.stopCommand, {
+        cwd: this.actualWorkDir,
+        env: {
+          ...process.env,
+          ...this.getEnvVariables(),
+        },
+        stdio: 'inherit'
+      })
+    } else {
+      return await this.kill(force)
+    }
+  }
+
+  public async kill(force: boolean) {
     const pid = await this.getPid()
     if (force) throw new Error('Force not supported at this time')
     if (pid) {

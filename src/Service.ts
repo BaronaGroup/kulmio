@@ -75,6 +75,7 @@ export default class Service {
   public async build() {
     const command = this.config.build
     if (!command) return
+    console.log('Building', this.config.name)
     cp.execSync(command, {
       cwd: this.actualWorkDir,
       env: {

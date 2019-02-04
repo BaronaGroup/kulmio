@@ -52,6 +52,7 @@ async function run() {
     }
     case 'update-kulmio':
       await updateKulmio()
+      break
     default:
       console.log('Invalid command', commandLineArgs.command)
   }

@@ -4,8 +4,14 @@
   "dependencies": {
     "wtfnode": "^0.7.3"
   },
+  "license": "mit",
+  "author": {
+    "name": "Tapani Haka"
+  },
+  "repository": "BaronaGroup/kulmio",
   "devDependencies": {
     "@types/node": "^10.12.10",
+    "npm-release": "^1.0.0",
     "ts-node": "^7.0.1",
     "ts-node-dev": "^1.0.0-pre.31",
     "tslint": "^5.11.0",
@@ -14,6 +20,7 @@
   "bin": "./bin/kulmio",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "release": "git checkout release && git merge master && npm run build && git add build && git commit -m 'Release' && git push origin release && git checkout -"
+    "prepare": "npm run build",
+    "release": "npm-release"
   }
 }

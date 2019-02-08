@@ -30,7 +30,7 @@ service names.
 
 ## Installing
 
-    npm i -g git+ssh://git@gitlab.baronatechnologies.fi/public-repositories/kulmio#release
+    npm i -g kulmio
     
 ## Commands
 

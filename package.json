@@ -15,7 +15,7 @@
     "ts-node": "8.2.0",
     "ts-node-dev": "1.0.0-pre.31",
     "tslint": "5.11.0",
-    "typescript": "3.2.2"
+    "typescript": "3.4.5"
   },
   "bin": "./bin/kulmio",
   "scripts": {

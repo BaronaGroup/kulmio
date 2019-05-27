@@ -2,7 +2,7 @@
   "name": "kulmio",
   "version": "0.0.2",
   "dependencies": {
-    "wtfnode": "^0.7.3"
+    "wtfnode": "0.7.3"
   },
   "license": "mit",
   "author": {
@@ -10,12 +10,12 @@
   },
   "repository": "BaronaGroup/kulmio",
   "devDependencies": {
-    "@types/node": "^10.12.10",
-    "npm-release": "^1.0.0",
-    "ts-node": "^7.0.1",
-    "ts-node-dev": "^1.0.0-pre.31",
-    "tslint": "^5.11.0",
-    "typescript": "^3.2.2"
+    "@types/node": "10.12.10",
+    "npm-release": "1.0.0",
+    "ts-node": "7.0.1",
+    "ts-node-dev": "1.0.0-pre.31",
+    "tslint": "5.11.0",
+    "typescript": "3.2.2"
   },
   "bin": "./bin/kulmio",
   "scripts": {

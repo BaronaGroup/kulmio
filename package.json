@@ -10,7 +10,7 @@
   },
   "repository": "BaronaGroup/kulmio",
   "devDependencies": {
-    "@types/node": "10.12.10",
+    "@types/node": "10.14.7",
     "npm-release": "1.0.0",
     "ts-node": "7.0.1",
     "ts-node-dev": "1.0.0-pre.31",

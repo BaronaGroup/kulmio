@@ -2,7 +2,7 @@
   "name": "kulmio",
   "version": "0.0.2",
   "dependencies": {
-    "wtfnode": "0.7.3"
+    "wtfnode": "0.8.0"
   },
   "license": "mit",
   "author": {

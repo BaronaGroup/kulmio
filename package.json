@@ -12,7 +12,7 @@
   "devDependencies": {
     "@types/node": "10.14.7",
     "npm-release": "1.0.0",
-    "ts-node": "7.0.1",
+    "ts-node": "8.2.0",
     "ts-node-dev": "1.0.0-pre.31",
     "tslint": "5.11.0",
     "typescript": "3.2.2"

@@ -32,6 +32,7 @@ function loadConfigFile(workingPath: string, filename: string): ConfigServicePai
   const rawConfig = (require(configPath) as ConfigFile) as any
   const config: Config = rawConfig.kulmioConfig || rawConfig.kulmio || rawConfig.default || rawConfig
 
+  validateConfig(config)
 
   const baseDir = (config.config && config.config.baseDir) || path.dirname(configPath)
   const configObj = config.config || {}

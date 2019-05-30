@@ -2,6 +2,7 @@
   "name": "kulmio",
   "version": "0.0.3",
   "dependencies": {
+    "ajv": "^6.10.0",
     "wtfnode": "0.8.0"
   },
   "license": "mit",

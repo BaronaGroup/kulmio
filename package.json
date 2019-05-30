@@ -2,7 +2,7 @@
   "name": "kulmio",
   "version": "0.0.3",
   "dependencies": {
-    "ajv": "^6.10.0",
+    "ajv": "6.10.0",
     "wtfnode": "0.8.0"
   },
   "license": "mit",
@@ -17,9 +17,9 @@
     "@types/websocket": "0.0.40",
     "jest": "24.8.0",
     "mkdirp": "0.5.1",
-    "mongoose": "^5.5.11",
+    "mongoose": "5.5.11",
     "npm-release": "1.0.0",
-    "schematar": "^1.0.2",
+    "schematar": "1.0.2",
     "ts-jest": "24.0.2",
     "ts-node": "8.2.0",
     "ts-node-dev": "1.0.0-pre.39",

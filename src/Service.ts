@@ -1,32 +1,15 @@
-import {ServerConfig} from './ServerConfig'
 import fs from 'fs'
 import cp from 'child_process'
 import path from 'path'
 import mkdirp from 'mkdirp'
-
-interface EnvObject {
-  [name: string]: string
-}
-
-export interface ServiceConfig {
-  name: string
-  envName?: string
-  command: string
-  stopCommand?: string
-  build?: string
-  workDir: string
-  env?: EnvObject
-  envFiles?: string[]
-  screenSuffix?: string
-  excludeFromAll?: boolean
-  groups?: string[]
-}
+import {ServiceConfig} from './config'
+import {RuntimeServerConfig} from './ServerModel'
 
 export default class Service {
   public readonly config: ServiceConfig
-  private serverConfig: ServerConfig
+  private serverConfig: RuntimeServerConfig
 
-  constructor(serverConfig: ServerConfig, serviceConfig: ServiceConfig) {
+  constructor(serverConfig: RuntimeServerConfig, serviceConfig: ServiceConfig) {
     this.serverConfig = serverConfig
     this.config = serviceConfig
   }
@@ -171,7 +154,7 @@ export default class Service {
     await this.start()
   }
 
-  private getEnvVariables(): EnvObject {
+  private getEnvVariables(): any {
     const baseDir = this.serverConfig.baseDir
     const envDir = baseDir + '/envs'
 

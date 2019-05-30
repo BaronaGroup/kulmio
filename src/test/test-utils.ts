@@ -1,6 +1,6 @@
-import {ServiceConfig} from '../Service'
 import {TestServerAPI, startServer, MetaCommand} from './test-server'
 import {WSClientToServerCommand} from './ws-commands'
+import {ServiceConfig} from '../config'
 
 export function createTestService(name: string, serverPort: number): ServiceConfig {
   return {

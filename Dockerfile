@@ -1,5 +1,5 @@
 # Used for running tests
-FROM node:current
+FROM node:current as test
 WORKDIR /app
 RUN apt-get update && \
   apt-get install -y screen && \
@@ -10,3 +10,6 @@ COPY package* ./
 RUN npm install
 COPY . .
 CMD npm run test-local
+
+FROM test AS test-travis
+RUN npm run build

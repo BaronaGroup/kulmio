@@ -33,7 +33,8 @@
     "prepare": "npm run build",
     "release": "npm-release",
     "test-local": "KULMIO_DISABLE_SCREEN=$(which screen > /dev/null || echo TRUE) jest --forceExit",
-    "test": "npm run build && docker build --tag kulmio:test . && docker run --rm --init kulmio:test",
+    "test": "npm run build && docker build --target test --tag kulmio:test . && docker run --rm --init kulmio:test",
+    "test-travis": "docker build --target test-travis --tag kulmio:test . && docker run --rm --init kulmio:test",
     "lint": "tslint --project tsconfig.json"
   },
   "jest": {

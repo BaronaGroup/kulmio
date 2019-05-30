@@ -5,8 +5,8 @@ import {WSClientToServerCommand} from './ws-commands'
 export function createTestService(name: string, serverPort: number): ServiceConfig {
   return {
     name,
-    workDir: __dirname + '/test-app',
-    command: 'npx ts-node test-app',
+    workDir: __dirname + '/../../build/test/test-app',
+    command: 'node test-app',
     env: {
       WS_SERVER_PORT: serverPort.toString(),
       CLIENT_ID: name,

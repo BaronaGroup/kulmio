@@ -11,15 +11,11 @@
     "jsxFactory": "jsx",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": [
-      "es2016",
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es2016", "es2017", "dom"],
     "module": "commonjs",
-    "outDir": "build"
+    "outDir": "build",
+    "incremental": true,
+    "tsBuildInfoFile": "ts-incremental.json"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

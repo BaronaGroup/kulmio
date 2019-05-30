@@ -5,20 +5,28 @@ import {createTestService, createTestServerHelper, until} from '../test-utils'
 
 const wsPort = 10000
 
+const testSetName = path.basename(__filename, '.ts')
+
 export const kulmioConfig: Config = {
   config: {
-    baseDir: '/tmp/' + path.basename(__filename, '.ts'),
+    screenSuffix: testSetName,
+    baseDir: '/tmp/' + testSetName,
   },
-  services: [createTestService('test1', wsPort)],
+  services: [
+    createTestService('test1', wsPort),
+    createTestService('test2', wsPort),
+    createTestService('test3', wsPort),
+  ],
 }
 
-describe(path.basename(__filename, '.ts'), () => {
+describe(testSetName, () => {
   const testUtil = createTestServerHelper(wsPort)
 
   beforeAll(testUtil.setup)
   afterAll(testUtil.destroy)
 
   it('is possible to start individual services', async function() {
+    jest.setTimeout(10000)
     await runWithArgs({
       configFile: __filename,
       args: [],
@@ -28,5 +36,21 @@ describe(path.basename(__filename, '.ts'), () => {
 
     await until(() => testUtil.serviceIsRunning('test1'))
     await testUtil.stopService('test1')
+  })
+
+  it('is possible to start multiple services', async function() {
+    jest.setTimeout(10000)
+    await runWithArgs({
+      configFile: __filename,
+      args: [],
+      command: 'start',
+      services: ['test1', 'test3'],
+    })
+
+    await until(() => testUtil.serviceIsRunning('test1'))
+    await until(() => testUtil.serviceIsRunning('test3'))
+    await until(() => !testUtil.serviceIsRunning('test2'))
+    await testUtil.stopService('test1')
+    await testUtil.stopService('test3')
   })
 })

@@ -31,7 +31,7 @@
     "prepare": "npm run build",
     "release": "npm-release",
     "test": "jest --forceExit",
-    "test-docker": "docker build --tag kulmio:test . && docker run --rm --init kulmio:test"
+    "test-docker": "npm run build && docker build --tag kulmio:test . && docker run --rm --init kulmio:test"
   },
   "jest": {
     "collectCoverageFrom": [

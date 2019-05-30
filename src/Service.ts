@@ -123,7 +123,11 @@ export default class Service {
     }
 
     function killMany(pids: number[]) {
-      cp.execSync(`kill -- ${pids.join(' ')}`)
+      try {
+        cp.execSync(`kill -- ${pids.join(' ')}`)
+      } catch (err) {
+        if (!err.message.includes('No such process')) throw err // TODO: make this more portable
+      }
     }
 
     function* getChildren(parentPid: number): IterableIterator<number> {

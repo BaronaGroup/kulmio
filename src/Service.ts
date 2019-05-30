@@ -77,8 +77,11 @@ export default class Service {
   }
 
   public async start() {
-    const command = this.config.command + ' 2>&1 | tee -a ' + this.logFile
-    const child = cp.spawn('screen', ['-D', '-m', '-S', this.screenName, 'bash', '-c', command], {
+    const useScreen = !process.env.KULMIO_DISABLE_SCREEN
+    const command = this.config.command + ' 2>&1 | tee -a ' + this.logFile,
+      spawnCommand = useScreen ? 'screen' : 'bash',
+      spawnArgs = useScreen ? ['-D', '-m', '-S', this.screenName, 'bash', '-c', command] : ['-c', command]
+    const child = cp.spawn(spawnCommand, spawnArgs, {
       cwd: this.actualWorkDir,
       env: {
         ...process.env,

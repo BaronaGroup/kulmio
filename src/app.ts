@@ -9,7 +9,7 @@ function isValidCommand(potential: string) {
 }
 
 async function run() {
-  //var wtf = require('wtfnode');
+  // var wtf = require('wtfnode');
   const commandLineArgs = parseCommandLine()
   return runWithArgs(commandLineArgs)
 }
@@ -59,7 +59,7 @@ export async function runWithArgs(commandLineArgs: Args) {
     default:
       console.log('Invalid command', commandLineArgs.command)
   }
-  //wtf.dump()
+  // wtf.dump()
 }
 
 if (!process.env.KULMIO_API_MODE) {
@@ -71,11 +71,11 @@ if (!process.env.KULMIO_API_MODE) {
 
 function parseCommandLine() {
   let [, , configFile, ...rest] = process.argv
-  if ((isValidCommand(configFile) || !looksLikeConfigFile(configFile)) && process.env['KULMIO_CONFIG']) {
+  if ((isValidCommand(configFile) || !looksLikeConfigFile(configFile)) && process.env.KULMIO_CONFIG) {
     rest.unshift(configFile)
-    configFile = process.env['KULMIO_CONFIG'] as string
+    configFile = process.env.KULMIO_CONFIG as string
   } else if (configFile === '--env') {
-    configFile = process.env['KULMIO_CONFIG'] || ''
+    configFile = process.env.KULMIO_CONFIG || ''
   }
   if (rest.length > 1) {
     if (isValidCommand(rest[rest.length - 1]) && !isValidCommand(rest[0])) {
@@ -117,7 +117,7 @@ async function serviceStatus(services: Service[]) {
 }
 
 async function startServices(services: Service[]) {
-  for (let service of services) {
+  for (const service of services) {
     const running = await service.isRunning()
     if (running) {
       console.log(service.name + ': Already running')
@@ -129,7 +129,7 @@ async function startServices(services: Service[]) {
 }
 
 async function buildServices(services: Service[]) {
-  for (let service of services) {
+  for (const service of services) {
     await service.build()
     if (await service.isRunning()) {
       await service.restart()
@@ -137,8 +137,8 @@ async function buildServices(services: Service[]) {
   }
 }
 async function stopServices(args: string[], services: Service[]) {
-  const promises: Promise<any>[] = []
-  for (let service of services) {
+  const promises: Array<Promise<any>> = []
+  for (const service of services) {
     const running = await service.isRunning()
     if (running) {
       console.log(service.name + ': Stopping...')

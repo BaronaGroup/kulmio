@@ -30,7 +30,8 @@
     "prepare": "npm run build",
     "release": "npm-release",
     "test-local": "jest --forceExit",
-    "test": "npm run build && docker build --tag kulmio:test . && docker run --rm --init kulmio:test"
+    "test": "npm run build && docker build --tag kulmio:test . && docker run --rm --init kulmio:test",
+    "lint": "tslint --project tsconfig.json"
   },
   "jest": {
     "collectCoverageFrom": [

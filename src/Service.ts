@@ -72,7 +72,7 @@ export default class Service {
         else resolve(true)
       })
     })
-    return running ? parseInt(pid) : null
+    return running ? +pid : null
   }
 
   public async isRunning() {
@@ -143,21 +143,21 @@ export default class Service {
       cp.execSync(`kill -- ${pids.join(' ')}`)
     }
 
-    function* getChildren(pid: number): IterableIterator<number> {
-      for (const childPid of findChildren(pid)) {
+    function* getChildren(parentPid: number): IterableIterator<number> {
+      for (const childPid of findChildren(parentPid)) {
         yield* getChildren(childPid)
         yield childPid
       }
     }
 
-    function findChildren(pid: number) {
+    function findChildren(parentPid: number) {
       try {
         const a = cp
-          .execSync(`pgrep -P ${pid}`)
+          .execSync(`pgrep -P ${parentPid}`)
           .toString('utf-8')
           .split('\n')
           .filter(x => x)
-        return a.map(l => parseInt(l))
+        return a.map(l => +l)
       } catch (err) {
         return []
       }
@@ -192,7 +192,7 @@ export default class Service {
       Object.keys(configEnv).map(key => ({key, value: configEnv[key]}))
     )
 
-    function combineEnv(...envParts: Array<{key: string; value: string}[]>) {
+    function combineEnv(...envParts: Array<Array<{key: string; value: string}>>) {
       const output: Record<string, string> = {}
       for (const part of envParts) {
         for (const envVar of part) {
@@ -232,6 +232,6 @@ export default class Service {
   }
 }
 
-function flatten<T>(arrays: Array<T[]>): T[] {
+function flatten<T>(arrays: T[][]): T[] {
   return ([] as T[]).concat(...arrays)
 }

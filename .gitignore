@@ -3,4 +3,3 @@ node_modules
 *.iml
 runtime
 build
-ts-incremental.json

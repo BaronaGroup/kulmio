@@ -14,7 +14,6 @@
     "@types/mkdirp": "^0.5.2",
     "@types/node": "10.14.8",
     "@types/websocket": "0.0.40",
-    "express": "^4.17.1",
     "jest": "^24.8.0",
     "mkdirp": "^0.5.1",
     "npm-release": "1.0.0",
@@ -30,8 +29,8 @@
     "build": "tsc --project tsconfig.json",
     "prepare": "npm run build",
     "release": "npm-release",
-    "test": "jest --forceExit",
-    "test-docker": "npm run build && docker build --tag kulmio:test . && docker run --rm --init kulmio:test"
+    "test-local": "jest --forceExit",
+    "test": "npm run build && docker build --tag kulmio:test . && docker run --rm --init kulmio:test"
   },
   "jest": {
     "collectCoverageFrom": [

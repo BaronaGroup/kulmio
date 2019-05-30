@@ -10,17 +10,45 @@
   },
   "repository": "BaronaGroup/kulmio",
   "devDependencies": {
+    "@types/jest": "^24.0.13",
+    "@types/mkdirp": "^0.5.2",
     "@types/node": "10.14.8",
+    "@types/websocket": "0.0.40",
+    "express": "^4.17.1",
+    "jest": "^24.8.0",
+    "mkdirp": "^0.5.1",
     "npm-release": "1.0.0",
+    "ts-jest": "^24.0.2",
     "ts-node": "8.2.0",
     "ts-node-dev": "1.0.0-pre.39",
     "tslint": "5.16.0",
-    "typescript": "3.5.1"
+    "typescript": "3.5.1",
+    "websocket": "^1.0.28"
   },
   "bin": "./bin/kulmio",
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "prepare": "npm run build",
-    "release": "npm-release"
+    "release": "npm-release",
+    "test": "jest --forceExit",
+    "test-docker": "docker build --tag kulmio:test . && docker run --rm --init kulmio:test"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "/src/**/*.js"
+    ],
+    "testMatch": [
+      "**/*-test.ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "setupFiles": [
+      "<rootDir>/src/test/test-setup.ts"
+    ]
   }
 }

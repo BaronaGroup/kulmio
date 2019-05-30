@@ -11,6 +11,12 @@ function isValidCommand(potential: string) {
 async function run() {
   //var wtf = require('wtfnode');
   const commandLineArgs = parseCommandLine()
+  return runWithArgs(commandLineArgs)
+}
+
+export type Args = ReturnType<typeof parseCommandLine>
+
+export async function runWithArgs(commandLineArgs: Args) {
 
   const model = new ServerModel(commandLineArgs.configFile)
   const services = getServices(model, commandLineArgs.services)
@@ -56,10 +62,12 @@ async function run() {
   //wtf.dump()
 }
 
-run().catch(err => {
-  console.error(err.message, err.stack)
-  process.exit(99)
-})
+if (!process.env.KULMIO_API_MODE) {
+  run().catch(err => {
+    console.error(err.message, err.stack)
+    process.exit(99)
+  })
+}
 
 function parseCommandLine() {
   let [, , configFile, ...rest] = process.argv

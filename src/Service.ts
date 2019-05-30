@@ -2,6 +2,7 @@ import {ServerConfig} from './ServerConfig'
 import fs from 'fs'
 import cp from 'child_process'
 import path from 'path'
+import mkdirp from 'mkdirp'
 
 interface EnvObject {
   [name: string]: string
@@ -39,11 +40,16 @@ export default class Service {
   }
 
   private get pidFile() {
-    return this.serverConfig.baseDir + '/pids/' + this.config.name + '.pid'
+    const pidDir = this.serverConfig.baseDir + '/pids'
+    if (!fs.existsSync(pidDir)) mkdirp.sync(pidDir)
+    return pidDir + '/' + this.config.name + '.pid'
   }
 
   get logFile() {
-    return this.serverConfig.baseDir + '/logs/' + this.config.name + '.log'
+    const logDir = this.serverConfig.baseDir + '/logs'
+    if (!fs.existsSync(logDir)) mkdirp.sync(logDir)
+
+    return logDir + '/' + this.config.name + '.log'
   }
 
   get actualWorkDir() {
@@ -59,7 +65,7 @@ export default class Service {
     if (!fs.existsSync(this.pidFile)) return null
     const pid = fs.readFileSync(this.pidFile, 'UTF-8')
     if (!pid) return null
-    const running = await new Promise((resolve) => {
+    const running = await new Promise(resolve => {
       const child = cp.exec('ps -p ' + pid)
       child.on('exit', code => {
         if (code === 1) resolve(false)
@@ -83,7 +89,7 @@ export default class Service {
         ...process.env,
         ...this.getEnvVariables(),
       },
-      stdio: 'inherit'
+      stdio: 'inherit',
     })
   }
 
@@ -96,7 +102,7 @@ export default class Service {
         ...this.getEnvVariables(),
       },
       stdio: 'ignore',
-      detached: true
+      detached: true,
     })
     const pid = child.pid
     child.unref()
@@ -113,7 +119,7 @@ export default class Service {
           ...process.env,
           ...this.getEnvVariables(),
         },
-        stdio: 'inherit'
+        stdio: 'inherit',
       })
     } else {
       return await this.kill(force)
@@ -140,15 +146,19 @@ export default class Service {
     function* getChildren(pid: number): IterableIterator<number> {
       for (const childPid of findChildren(pid)) {
         yield* getChildren(childPid)
-        yield(childPid)
+        yield childPid
       }
     }
 
     function findChildren(pid: number) {
       try {
-        const a = cp.execSync(`pgrep -P ${pid}`).toString('utf-8').split('\n').filter(x => x)
+        const a = cp
+          .execSync(`pgrep -P ${pid}`)
+          .toString('utf-8')
+          .split('\n')
+          .filter(x => x)
         return a.map(l => parseInt(l))
-      } catch(err) {
+      } catch (err) {
         return []
       }
     }
@@ -162,13 +172,14 @@ export default class Service {
   }
 
   private getEnvVariables(): EnvObject {
-
     const baseDir = this.serverConfig.baseDir
     const envDir = baseDir + '/envs'
 
     const globalEnvs = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/global.env`))
     const envName = this.config.envName || this.config.name
-    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/${envName}.env`))
+    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed =>
+      loadEnvFromFile(`${ed}/${envName}.env`)
+    )
     const configEnv: Record<string, string> = this.config.env || {}
 
     return combineEnv(
@@ -181,11 +192,10 @@ export default class Service {
       Object.keys(configEnv).map(key => ({key, value: configEnv[key]}))
     )
 
-    function combineEnv(...envParts: Array<{key: string, value: string}[]>) {
+    function combineEnv(...envParts: Array<{key: string; value: string}[]>) {
       const output: Record<string, string> = {}
       for (const part of envParts) {
-        for (const envVar of part)
-        {
+        for (const envVar of part) {
           output[envVar.key] = envVar.value.replace(/\$(?:(\w+)|{(.+?)})/g, (_fullMatch, b, c) => {
             const variable = b || c
             return output[variable] || process.env[variable] || ''
@@ -202,11 +212,12 @@ export default class Service {
         return []
       }
       const data = fs.readFileSync(fullName, 'UTF-8')
-      return data.split(/[\r\n]+/)
+      return data
+        .split(/[\r\n]+/)
         .map(l => l.trim())
         .filter(s => !!s)
         .map(e => {
-          let [key, value]= (e.match(/^(.+?)=(.+)$/) || []).slice(1)
+          let [key, value] = (e.match(/^(.+?)=(.+)$/) || []).slice(1)
           if (value) {
             value = value.replace(/__DIRNAME__/g, dirname)
           }

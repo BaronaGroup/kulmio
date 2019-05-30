@@ -1,3 +1,2 @@
 #! /usr/bin/env node
-require('../build/app')
-
+require('../build/src/app')

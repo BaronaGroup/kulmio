@@ -1,13 +1,14 @@
 import path from 'path'
-import {Config} from '../../ServerModel'
 import {runWithArgs} from '../../app'
 import {createTestService, createTestServerHelper, until} from '../test-utils'
+import {Config} from '../../config'
 
 const wsPort = 10000
 
 const testSetName = path.basename(__filename, '.ts')
 
 export const kulmioConfig: Config = {
+  schema: 'V1',
   config: {
     screenSuffix: testSetName,
     baseDir: '/tmp/' + testSetName,

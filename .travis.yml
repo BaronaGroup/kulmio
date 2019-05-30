@@ -2,7 +2,7 @@ services:
   - docker
 
 before_script:
-  - npm run build
+  - docker build --target test-travis --tag kulmio:test .
 
 script:
-  - npm run lint && npm run test-travis
+  - docker run --rm --init kulmio:test npm run lint && docker run --rm --init kulmio:test

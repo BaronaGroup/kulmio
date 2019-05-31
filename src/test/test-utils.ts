@@ -10,7 +10,7 @@ export function createTestService(
 ): ServiceConfig {
   return {
     name,
-    workDir: __dirname + '/../../build/test/test-app',
+    workDir: __dirname + '/../../build/src/test/test-app',
     command: 'node test-app',
     ...(customizations || {}),
     env: {

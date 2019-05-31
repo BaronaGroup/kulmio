@@ -19,7 +19,7 @@
     "mkdirp": "0.5.1",
     "mongoose": "5.5.12",
     "npm-release": "1.0.0",
-    "schematar": "1.0.2",
+    "schematar": "1.1.0",
     "ts-jest": "24.0.2",
     "ts-node": "8.2.0",
     "ts-node-dev": "1.0.0-pre.39",

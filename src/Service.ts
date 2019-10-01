@@ -18,6 +18,10 @@ export default class Service {
     return this.config.name
   }
 
+  get aliases() {
+    return [this.config.name, ...(this.config.aliases || [])]
+  }
+
   get screenName() {
     return 'server-' + this.name + '.' + (this.config.screenSuffix || this.serverConfig.screenSuffix || 'kulmio')
   }

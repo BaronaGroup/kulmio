@@ -14,6 +14,7 @@ export interface ConfigV1Base<IDType, DateType>
   }
   services: Array<{
     name: string
+    aliases?: Array<string>
     envName?: string
     command: string
     stopCommand?: string
@@ -28,4 +29,4 @@ export interface ConfigV1Base<IDType, DateType>
   }>
   extends?: Array<string>
 }
-export const configV1Hash = '5cf24b4c7421b59f1f2a24138fe8323674bec9ae3d90f0fd5926de417dfd9107'
+export const configV1Hash = 'c8890e6b9ca6a2cc7b56a238cc08837d49a0da0d5c768b9836b72481fc1c7e9b'

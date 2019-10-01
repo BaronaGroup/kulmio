@@ -168,7 +168,7 @@ async function getServices(model: ServerModel, serviceNames: string[], command: 
   }
   const foundServices = model.services.filter(
     service =>
-      serviceNames.includes(service.name) || (service.config.groups || []).some(group => serviceNames.includes(group))
+      service.aliases.some(alias => serviceNames.includes(alias)) || (service.config.groups || []).some(group => serviceNames.includes(group))
   )
   const missingServices = serviceNames.filter(sn => foundServices.every(found => found.name !== sn))
   if (missingServices.length) throw new Error('No such services services: ' + missingServices.join(' '))

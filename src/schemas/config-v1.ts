@@ -19,6 +19,7 @@ export default {
       type: [
         new Complex({
           name: String,
+          aliases: { type: [String], optional: true },
           envName: { type: String, optional: true },
           command: String,
           stopCommand: { type: String, optional: true },

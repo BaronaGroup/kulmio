@@ -27,6 +27,7 @@ export function validateConfig(config: Config): void {
     case 'https://raw.githubusercontent.com/BaronaGroup/kulmio/master/generated/json-schemas/config-v1.json':
     case 'V1': {
       const isValid = validateV1(config)
+      console.log('iv', isValid)
       if (!isValid) {
         throw new Error('Configuration validation failed: ' + JSON.stringify(validateV1.errors, null, 2))
       }

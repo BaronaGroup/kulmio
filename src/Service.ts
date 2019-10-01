@@ -41,7 +41,12 @@ export default class Service {
 
   public async getStatus() {
     const pid = await this.getPid()
-    return pid ? 'Running #' + pid : 'Stopped'
+    const healthy = this.config.healthCommand && (await this.isHealthy())
+    if (pid) {
+      return 'Running #' + pid + ' ' + (this.config.healthCommand ? (healthy ? 'Healthy' : 'NOT HEALTHY') : '')
+    } else {
+      return 'Stopped'
+    }
   }
 
   public async getPid() {
@@ -56,6 +61,29 @@ export default class Service {
       })
     })
     return running ? +pid : null
+  }
+
+  public async isHealthy() {
+    const command = this.config.healthCommand
+    if (!command) return undefined
+
+    // TODO: add way to get the output
+    return new Promise(resolve => {
+      cp.exec(
+        command,
+        {
+          cwd: this.actualWorkDir,
+          env: {
+            ...process.env,
+            ...this.getEnvVariables(),
+          },
+        },
+        err => {
+          if (err) return resolve(false)
+          resolve(true)
+        }
+      )
+    })
   }
 
   public async isRunning() {

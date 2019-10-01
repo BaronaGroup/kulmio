@@ -115,7 +115,7 @@ function looksLikeConfigFile(fn: string) {
 async function serviceStatus(services: Service[]) {
   const statuses = services.map(service => ({ service, status: service.getStatus() }))
   for (const { service, status } of statuses) {
-    console.log(service.name, await status, await service.getPid())
+    console.log(service.name, await status)
   }
 }
 

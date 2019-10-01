@@ -17,6 +17,7 @@ export interface ConfigV1Base<IDType, DateType>
     envName?: string
     command: string
     stopCommand?: string
+    healthCommand?: string
     build?: string
     workDir: string
     env?: any
@@ -27,4 +28,4 @@ export interface ConfigV1Base<IDType, DateType>
   }>
   extends?: Array<string>
 }
-export const configV1Hash = '4e7243410386ab3f38adec49e2c20f65384f9e5380f5a05053bb87b86d1cac77'
+export const configV1Hash = '5cf24b4c7421b59f1f2a24138fe8323674bec9ae3d90f0fd5926de417dfd9107'

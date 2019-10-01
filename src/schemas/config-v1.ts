@@ -22,6 +22,7 @@ export default {
           envName: { type: String, optional: true },
           command: String,
           stopCommand: { type: String, optional: true },
+          healthCommand: { type: String, optional: true },
           build: { type: String, optional: true },
           workDir: String,
           env: { type: Object, optional: true },

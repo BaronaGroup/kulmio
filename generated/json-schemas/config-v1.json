@@ -56,6 +56,9 @@
           "stopCommand": {
             "type": "string"
           },
+          "healthCommand": {
+            "type": "string"
+          },
           "build": {
             "type": "string"
           },

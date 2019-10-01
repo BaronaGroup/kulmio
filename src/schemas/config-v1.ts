@@ -24,7 +24,7 @@ export default {
           stopCommand: { type: String, optional: true },
           build: { type: String, optional: true },
           workDir: String,
-          env: Object,
+          env: { type: Object, optional: true },
           envFiles: { type: [String], optional: true },
           screenSuffix: { type: String, optional: true },
           excludeFromAll: { type: Boolean, optional: true },

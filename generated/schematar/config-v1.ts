@@ -19,7 +19,7 @@ export interface ConfigV1Base<IDType, DateType>
     stopCommand?: string
     build?: string
     workDir: string
-    env: any
+    env?: any
     envFiles?: Array<string>
     screenSuffix?: string
     excludeFromAll?: boolean
@@ -27,4 +27,4 @@ export interface ConfigV1Base<IDType, DateType>
   }>
   extends?: Array<string>
 }
-export const configV1Hash = 'f3ede5c68c9c4069ae5d0e5f277aeaa26ba2fc61166ea3d440476c7c37216b17'
+export const configV1Hash = '4e7243410386ab3f38adec49e2c20f65384f9e5380f5a05053bb87b86d1cac77'

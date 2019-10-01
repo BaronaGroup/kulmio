@@ -41,8 +41,7 @@
         "required": [
           "name",
           "command",
-          "workDir",
-          "env"
+          "workDir"
         ],
         "properties": {
           "name": {

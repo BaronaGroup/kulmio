@@ -25,6 +25,12 @@ export default class ServerModel {
     const config = loadConfigFile(process.cwd(), configFile)
     this.services = config.map(({ serviceConfig, systemConfig }) => new Service(systemConfig.runtime, serviceConfig))
   }
+
+  public getService(name: string) {
+    const found = this.services.find(s => s.name === name || s.aliases.includes(name))
+    if (!found) throw new Error('No such service: ' + name)
+    return found
+  }
 }
 
 function loadConfigFile(workingPath: string, filename: string): ConfigServicePair[] {

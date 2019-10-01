@@ -20,7 +20,9 @@ export default {
         new Complex({
           name: String,
           aliases: { type: [String], optional: true },
+          dependencies: { type: [String], optional: true },
           envName: { type: String, optional: true },
+          useHealthForIsRunning: { type: Boolean, optional: true },
           command: String,
           stopCommand: { type: String, optional: true },
           healthCommand: { type: String, optional: true },

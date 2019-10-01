@@ -1,6 +1,18 @@
 import ServerModel from './ServerModel'
 import Service from './Service'
 import cp from 'child_process'
+import { delay } from './test/test-utils'
+
+let path = '../package.json'
+while (true) {
+  try {
+    const p = require(path)
+    ;(global as any).kulmioVersion = p.version
+    break
+  } catch (err) {
+    path = '../' + path
+  }
+}
 
 const validCommands = /status|build|start|run|stop|restart|logs|screen/i
 
@@ -14,11 +26,7 @@ async function run() {
   return runWithArgs(commandLineArgs)
 }
 
-const includeRunningOtherServicesFor = [
-  'status',
-  'stop',
-  'restart',
-]
+const includeRunningOtherServicesFor = ['status', 'stop', 'restart']
 
 export type Args = ReturnType<typeof parseCommandLine>
 
@@ -37,11 +45,19 @@ export async function runWithArgs(commandLineArgs: Args) {
       break
     }
     case 'start': {
-      await startServices(services)
+      if (commandLineArgs.args.includes('--no-dependencies')) {
+        startServicesNoDependencies(services)
+      } else {
+        await startServices(services, model)
+      }
       break
     }
     case 'run': {
-      await startServices(services)
+      if (commandLineArgs.args.includes('--no-dependencies')) {
+        startServicesNoDependencies(services)
+      } else {
+        await startServices(services, model)
+      }
       await openScreen(services)
       break
     }
@@ -51,7 +67,11 @@ export async function runWithArgs(commandLineArgs: Args) {
     }
     case 'restart': {
       await stopServices(commandLineArgs.args, services)
-      await startServices(services)
+      if (commandLineArgs.args.includes('--no-dependencies')) {
+        startServicesNoDependencies(services)
+      } else {
+        await startServices(services, model)
+      }
       break
     }
     case 'logs': {
@@ -119,7 +139,7 @@ async function serviceStatus(services: Service[]) {
   }
 }
 
-async function startServices(services: Service[]) {
+async function startServicesNoDependencies(services: Service[]) {
   for (const service of services) {
     const running = await service.isRunning()
     if (running) {
@@ -129,6 +149,50 @@ async function startServices(services: Service[]) {
       await service.start()
     }
   }
+}
+async function startServices(services: Service[], model: ServerModel) {
+  const workingSet = new Map<string, Promise<boolean>>()
+  const mainPromises = services.map(service => startService(service, workingSet, model))
+  await Promise.all(mainPromises)
+}
+
+function startService(service: Service, workingSet: Map<string, Promise<boolean>>, model: ServerModel) {
+  const promise = workingSet.get(service.name)
+  if (promise) return promise
+  workingSet.set(
+    service.name,
+    new Promise(async (resolve, reject) => {
+      try {
+        const running = await service.isRunning()
+
+        if (!running) {
+          if (service.dependencies.length) {
+            const deps = Promise.all(
+              service.dependencies.map(dep => startService(model.getService(dep), workingSet, model))
+            )
+            console.log(service.name + ': Waiting for dependencies')
+            await deps
+          }
+
+          console.log(service.name + ': Starting...')
+          await service.start()
+        }
+
+        if ((await service.isHealthy()) === false) {
+          console.log(service.name + ': Waiting until healthy...')
+          do {
+            await delay(500)
+          } while ((await service.isHealthy()) === false)
+        }
+        console.log(service.name + ': Started')
+
+        resolve(true)
+      } catch (err) {
+        reject(err)
+      }
+    })
+  )
+  return workingSet.get(service.name)
 }
 
 async function buildServices(services: Service[]) {
@@ -157,18 +221,18 @@ async function getServices(model: ServerModel, serviceNames: string[], command: 
     if (!includeRunningOtherServicesFor.includes(command)) return baseServices
 
     const potentiallyExcludedServices = model.services.filter(service => service.config.excludeFromAll),
-      runningPotentiallyExcludedServices = (await Promise.all(potentiallyExcludedServices.map(service => service.isRunning())))
+      runningPotentiallyExcludedServices = (await Promise.all(
+        potentiallyExcludedServices.map(service => service.isRunning())
+      ))
         .map((running, i) => running && potentiallyExcludedServices[i])
         .filter(running => running) as Service[]
 
-    return [
-      ...baseServices,
-      ...runningPotentiallyExcludedServices
-    ]
+    return [...baseServices, ...runningPotentiallyExcludedServices]
   }
   const foundServices = model.services.filter(
     service =>
-      service.aliases.some(alias => serviceNames.includes(alias)) || (service.config.groups || []).some(group => serviceNames.includes(group))
+      service.aliases.some(alias => serviceNames.includes(alias)) ||
+      (service.config.groups || []).some(group => serviceNames.includes(group))
   )
   const missingServices = serviceNames.filter(sn => foundServices.every(found => found.name !== sn))
   if (missingServices.length) throw new Error('No such services services: ' + missingServices.join(' '))

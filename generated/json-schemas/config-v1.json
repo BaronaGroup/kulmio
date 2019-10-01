@@ -53,8 +53,17 @@
               "type": "string"
             }
           },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "envName": {
             "type": "string"
+          },
+          "useHealthForIsRunning": {
+            "type": "boolean"
           },
           "command": {
             "type": "string"

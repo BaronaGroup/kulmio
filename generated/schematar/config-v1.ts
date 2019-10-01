@@ -15,7 +15,9 @@ export interface ConfigV1Base<IDType, DateType>
   services: Array<{
     name: string
     aliases?: Array<string>
+    dependencies?: Array<string>
     envName?: string
+    useHealthForIsRunning?: boolean
     command: string
     stopCommand?: string
     healthCommand?: string
@@ -29,4 +31,4 @@ export interface ConfigV1Base<IDType, DateType>
   }>
   extends?: Array<string>
 }
-export const configV1Hash = 'c8890e6b9ca6a2cc7b56a238cc08837d49a0da0d5c768b9836b72481fc1c7e9b'
+export const configV1Hash = '1140eb15d4f5e8ca33e112b69ecb97027402073aa520e379c74df2825c7c9f1d'

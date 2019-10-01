@@ -26,6 +26,10 @@ export default class Service {
     return 'server-' + this.name + '.' + (this.config.screenSuffix || this.serverConfig.screenSuffix || 'kulmio')
   }
 
+  get dependencies() {
+    return this.config.dependencies || []
+  }
+
   private get pidFile() {
     const pidDir = this.serverConfig.baseDir + '/pids'
     if (!fs.existsSync(pidDir)) mkdirp.sync(pidDir)
@@ -46,7 +50,9 @@ export default class Service {
   public async getStatus() {
     const pid = await this.getPid()
     const healthy = this.config.healthCommand && (await this.isHealthy())
-    if (pid) {
+    if (!pid && this.config.useHealthForIsRunning && healthy) {
+      return 'Running externally'
+    } else if (pid) {
       return 'Running #' + pid + ' ' + (this.config.healthCommand ? (healthy ? 'Healthy' : 'NOT HEALTHY') : '')
     } else {
       return 'Stopped'
@@ -82,7 +88,10 @@ export default class Service {
             ...this.getEnvVariables(),
           },
         },
-        err => {
+        (err, stdout, stderr) => {
+          if (process.env.KULMIO_DEBUG) {
+            console.log(err, stdout, stderr)
+          }
           if (err) return resolve(false)
           resolve(true)
         }
@@ -91,6 +100,9 @@ export default class Service {
   }
 
   public async isRunning() {
+    if (this.config.useHealthForIsRunning) {
+      return (await this.isHealthy()) === true
+    }
     return (await this.getPid()) !== null
   }
 

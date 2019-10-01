@@ -1,6 +1,6 @@
 import path from 'path'
-import {createTestService, createTestServerHelper, until, runKulmio} from '../test-utils'
-import {Config} from '../../config'
+import { createTestService, createTestServerHelper, until, runKulmio } from '../test-utils'
+import { Config } from '../../config'
 
 const wsPort = 10000
 
@@ -14,7 +14,7 @@ export const kulmioConfig: Config = {
   },
   services: [
     createTestService('test1', wsPort),
-    createTestService('testExplicit', wsPort, {excludeFromAll: true}),
+    createTestService('testExplicit', wsPort, { excludeFromAll: true }),
     createTestService('test2', wsPort),
     createTestService('test3', wsPort),
   ],

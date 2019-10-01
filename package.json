@@ -35,7 +35,8 @@
     "release": "npm-release",
     "test-local": "jest --forceExit",
     "test": "npm run build && docker build --tag kulmio:test . && docker run --rm --init kulmio:test",
-    "lint": "tslint --project tsconfig.json"
+    "lint": "tslint --project tsconfig.json",
+    "prettier": "find src -name '*.ts' | xargs prettier --write"
   },
   "jest": {
     "collectCoverageFrom": [

@@ -1,4 +1,4 @@
-import {Schema, Complex} from 'schematar'
+import { Schema, Complex } from 'schematar'
 
 export default {
   fields: {
@@ -9,29 +9,29 @@ export default {
     config: {
       optional: true,
       type: new Complex({
-        envDirectories: {type: [String], optional: true},
-        envFiles: {type: [String], optional: true},
-        baseDir: {type: String, optional: true},
-        screenSuffix: {type: String, optional: true},
+        envDirectories: { type: [String], optional: true },
+        envFiles: { type: [String], optional: true },
+        baseDir: { type: String, optional: true },
+        screenSuffix: { type: String, optional: true },
       }),
     },
     services: {
       type: [
         new Complex({
           name: String,
-          envName: {type: String, optional: true},
+          envName: { type: String, optional: true },
           command: String,
-          stopCommand: {type: String, optional: true},
-          build: {type: String, optional: true},
+          stopCommand: { type: String, optional: true },
+          build: { type: String, optional: true },
           workDir: String,
           env: Object,
-          envFiles: {type: [String], optional: true},
-          screenSuffix: {type: String, optional: true},
-          excludeFromAll: {type: Boolean, optional: true},
-          groups: {type: [String], optional: true},
+          envFiles: { type: [String], optional: true },
+          screenSuffix: { type: String, optional: true },
+          excludeFromAll: { type: Boolean, optional: true },
+          groups: { type: [String], optional: true },
         }),
       ],
     },
-    extends: {type: [String], optional: true},
+    extends: { type: [String], optional: true },
   },
 } as Schema

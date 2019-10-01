@@ -1,9 +1,9 @@
 import Service from './Service'
 import path from 'path'
-import {Config, ServiceConfig, validateConfig} from './config'
-import {Existing} from './types'
+import { Config, ServiceConfig, validateConfig } from './config'
+import { Existing } from './types'
 
-export type ConfigFile = Config | {default: Config} | {kulmio: Config} | {kulmioConfig: Config}
+export type ConfigFile = Config | { default: Config } | { kulmio: Config } | { kulmioConfig: Config }
 
 export type RuntimeServerConfig = Omit<Existing<Config['config']>, 'baseDir'> & {
   baseDir: string
@@ -23,7 +23,7 @@ export default class ServerModel {
 
   constructor(configFile: string) {
     const config = loadConfigFile(process.cwd(), configFile)
-    this.services = config.map(({serviceConfig, systemConfig}) => new Service(systemConfig.runtime, serviceConfig))
+    this.services = config.map(({ serviceConfig, systemConfig }) => new Service(systemConfig.runtime, serviceConfig))
   }
 }
 
@@ -39,7 +39,7 @@ function loadConfigFile(workingPath: string, filename: string): ConfigServicePai
 
   const output = config.services.map(serviceConfig => ({
     serviceConfig,
-    systemConfig: {...config, runtime: {...configObj, baseDir}},
+    systemConfig: { ...config, runtime: { ...configObj, baseDir } },
   }))
   for (const extended of config.extends || []) {
     for (const service of loadConfigFile(path.dirname(configPath), extended)) {

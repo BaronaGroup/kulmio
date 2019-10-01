@@ -1,5 +1,5 @@
-import {ConfigV1Base, configV1Hash} from '../generated/schematar/config-v1'
-import {hashSchema} from 'schematar'
+import { ConfigV1Base, configV1Hash } from '../generated/schematar/config-v1'
+import { hashSchema } from 'schematar'
 import v1 from './schemas/config-v1'
 import v1json from '../generated/json-schemas/config-v1.json'
 import Ajv from 'ajv'

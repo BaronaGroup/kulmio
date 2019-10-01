@@ -1,6 +1,6 @@
 import path from 'path'
-import {createTestService, createTestServerHelper, runKulmio, until} from '../test-utils'
-import {Config} from '../../config'
+import { createTestService, createTestServerHelper, runKulmio, until } from '../test-utils'
+import { Config } from '../../config'
 
 const wsPort = 10001
 

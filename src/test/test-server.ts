@@ -1,7 +1,7 @@
 import http from 'http'
-import {server as WebSocketServer, connection as WebSocketConnection} from 'websocket'
-import {WSClientToServerCommand, WSServerToClientCommand} from './ws-commands'
-import {PromisedType} from '../types'
+import { server as WebSocketServer, connection as WebSocketConnection } from 'websocket'
+import { WSClientToServerCommand, WSServerToClientCommand } from './ws-commands'
+import { PromisedType } from '../types'
 
 interface ConnectionClosed {
   command: 'connection-closed'
@@ -38,7 +38,7 @@ export async function startServer(port: number, handleCommand: HandleCommandFn) 
         const command = JSON.parse(message.utf8Data as string) as WSClientToServerCommand
 
         switch (command.command) {
-          case 'hello':        
+          case 'hello':
             clientId = command.clientId
             console.log('Client', clientId, 'connected')
             connections.set(clientId, connection)

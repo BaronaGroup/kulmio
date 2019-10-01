@@ -1,7 +1,7 @@
-import {TestServerAPI, startServer, MetaCommand} from './test-server'
-import {WSClientToServerCommand} from './ws-commands'
-import {ServiceConfig} from '../config'
-import {runWithArgs} from '../app'
+import { TestServerAPI, startServer, MetaCommand } from './test-server'
+import { WSClientToServerCommand } from './ws-commands'
+import { ServiceConfig } from '../config'
+import { runWithArgs } from '../app'
 
 export function createTestService(
   name: string,
@@ -64,7 +64,7 @@ export function createTestServerHelper(port: number) {
   async function stopService(service: string) {
     if (!testServer) throw new Error('Test server not running')
     if (!activeClients.has(service)) throw new Error(service + 'not running, cannot stop it')
-    testServer.sendCommand(service, {command: 'exit'})
+    testServer.sendCommand(service, { command: 'exit' })
 
     await until(() => !serviceIsRunning(service))
   }

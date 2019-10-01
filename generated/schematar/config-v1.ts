@@ -1,8 +1,10 @@
 // Generated file, do not edit!
 
-// tslint:disable array-type
+// tslint:disable
+/* eslint-disable */
 // @ts-ignore -- ignore possibly unused type parameters
-export interface ConfigV1Base<IDType, DateType> {
+export interface ConfigV1Base<IDType, DateType>
+{
   schema: 'V1' | 'https://raw.githubusercontent.com/BaronaGroup/kulmio/master/generated/json-schemas/config-v1.json'
   config?: {
     envDirectories?: Array<string>

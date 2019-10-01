@@ -17,7 +17,6 @@ async function run() {
 export type Args = ReturnType<typeof parseCommandLine>
 
 export async function runWithArgs(commandLineArgs: Args) {
-
   const model = new ServerModel(commandLineArgs.configFile)
   const services = getServices(model, commandLineArgs.services)
 
@@ -98,20 +97,17 @@ function parseCommandLine() {
     configFile,
     command,
     args,
-    services
+    services,
   }
 }
 
 function looksLikeConfigFile(fn: string) {
-  return fn === '--env'
-   || fn.endsWith('.json')
-   || fn.endsWith('.js')
-   || fn.includes('/')
+  return fn === '--env' || fn.endsWith('.json') || fn.endsWith('.js') || fn.includes('/')
 }
 
 async function serviceStatus(services: Service[]) {
-  const statuses = services.map(service => ({service, status: service.getStatus()}))
-  for (const {service, status} of statuses) {
+  const statuses = services.map(service => ({ service, status: service.getStatus() }))
+  for (const { service, status } of statuses) {
     console.log(service.name, await status, await service.getPid())
   }
 }
@@ -152,9 +148,10 @@ function getServices(model: ServerModel, serviceNames: string[]) {
   if (!serviceNames.length) {
     return model.services.filter(service => !service.config.excludeFromAll)
   }
-  const foundServices = model.services.filter(service =>
-    serviceNames.includes(service.name)
-    || (service.config.groups || []).some(group => serviceNames.includes(group)))
+  const foundServices = model.services.filter(
+    service =>
+      serviceNames.includes(service.name) || (service.config.groups || []).some(group => serviceNames.includes(group))
+  )
   const missingServices = serviceNames.filter(sn => foundServices.every(found => found.name !== sn))
   if (missingServices.length) throw new Error('No such services services: ' + missingServices.join(' '))
   return foundServices
@@ -162,7 +159,7 @@ function getServices(model: ServerModel, serviceNames: string[]) {
 
 async function logs(args: string[], services: Service[]) {
   const logfiles = services.map(service => service.logFile)
-  cp.execSync('tail ' + args.join(' ') + ' -- ' + logfiles.join(' '), {stdio: 'inherit'})
+  cp.execSync('tail ' + args.join(' ') + ' -- ' + logfiles.join(' '), { stdio: 'inherit' })
 }
 
 async function openScreen(services: Service[]) {
@@ -170,5 +167,5 @@ async function openScreen(services: Service[]) {
     console.error('Screen is only applicable for a single service')
     return
   }
-  cp.execSync('screen -raAd ' + services[0].screenName, { stdio: 'inherit'})
+  cp.execSync('screen -raAd ' + services[0].screenName, { stdio: 'inherit' })
 }

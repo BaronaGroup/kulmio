@@ -1,5 +1,5 @@
-import {client as WebSocketClient} from 'websocket'
-import {WSServerToClientCommand, WSClientToServerCommand} from '../ws-commands'
+import { client as WebSocketClient } from 'websocket'
+import { WSServerToClientCommand, WSClientToServerCommand } from '../ws-commands'
 
 const wsServerPort = process.env.WS_SERVER_PORT,
   clientId = process.env.CLIENT_ID || 'unspecified'
@@ -12,7 +12,7 @@ client.on('connectFailed', err => {
 
 client.on('connect', connection => {
   console.log('Connected')
-  sendCommand({command: 'hello', clientId})
+  sendCommand({ command: 'hello', clientId })
   connection.on('error', err => {
     console.log('Connection error: ' + err)
   })
@@ -29,7 +29,7 @@ client.on('connect', connection => {
           connection.close()
         default:
           console.log('Invalid command', data.command)
-          sendCommand({command: 'error', message: 'Invalid command: ' + data.command})
+          sendCommand({ command: 'error', message: 'Invalid command: ' + data.command })
       }
     }
   })

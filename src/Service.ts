@@ -2,8 +2,8 @@ import fs from 'fs'
 import cp from 'child_process'
 import path from 'path'
 import mkdirp from 'mkdirp'
-import {ServiceConfig} from './config'
-import {RuntimeServerConfig} from './ServerModel'
+import { ServiceConfig } from './config'
+import { RuntimeServerConfig } from './ServerModel'
 
 export default class Service {
   public readonly config: ServiceConfig
@@ -176,10 +176,10 @@ export default class Service {
       loadEnvFromFile(envDir + '/' + envName + '.env'),
       ...envsFromDirectories,
       loadEnvFromFiles(this.config.envFiles || []),
-      Object.keys(configEnv).map(key => ({key, value: configEnv[key]}))
+      Object.keys(configEnv).map(key => ({ key, value: configEnv[key] }))
     )
 
-    function combineEnv(...envParts: Array<Array<{key: string; value: string}>>) {
+    function combineEnv(...envParts: Array<Array<{ key: string; value: string }>>) {
       const output: Record<string, string> = {}
       for (const part of envParts) {
         for (const envVar of part) {
@@ -208,9 +208,9 @@ export default class Service {
           if (value) {
             value = value.replace(/__DIRNAME__/g, dirname)
           }
-          return {key, value}
+          return { key, value }
         })
-        .filter(({value}) => value !== undefined)
+        .filter(({ value }) => value !== undefined)
     }
 
     function loadEnvFromFiles(files: string[]) {

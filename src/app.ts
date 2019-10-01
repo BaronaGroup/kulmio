@@ -14,13 +14,20 @@ async function run() {
   return runWithArgs(commandLineArgs)
 }
 
+const includeRunningOtherServicesFor = [
+  'status',
+  'stop',
+  'restart',
+]
+
 export type Args = ReturnType<typeof parseCommandLine>
 
 export async function runWithArgs(commandLineArgs: Args) {
   const model = new ServerModel(commandLineArgs.configFile)
-  const services = getServices(model, commandLineArgs.services)
+  const command = commandLineArgs.command.toLowerCase()
+  const services = await getServices(model, commandLineArgs.services, command)
 
-  switch (commandLineArgs.command.toLowerCase()) {
+  switch (command) {
     case 'status': {
       await serviceStatus(services)
       break
@@ -144,9 +151,20 @@ async function stopServices(args: string[], services: Service[]) {
   await Promise.all(promises)
 }
 
-function getServices(model: ServerModel, serviceNames: string[]) {
+async function getServices(model: ServerModel, serviceNames: string[], command: string): Promise<Service[]> {
   if (!serviceNames.length) {
-    return model.services.filter(service => !service.config.excludeFromAll)
+    const baseServices = model.services.filter(service => !service.config.excludeFromAll)
+    if (!includeRunningOtherServicesFor.includes(command)) return baseServices
+
+    const potentiallyExcludedServices = model.services.filter(service => service.config.excludeFromAll),
+      runningPotentiallyExcludedServices = (await Promise.all(potentiallyExcludedServices.map(service => service.isRunning())))
+        .map((running, i) => running && potentiallyExcludedServices[i])
+        .filter(running => running) as Service[]
+
+    return [
+      ...baseServices,
+      ...runningPotentiallyExcludedServices
+    ]
   }
   const foundServices = model.services.filter(
     service =>

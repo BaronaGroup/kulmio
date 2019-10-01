@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "ajv": "6.10.2",
+    "schematar": "1.5.0",
     "wtfnode": "0.8.0"
   },
   "license": "mit",
@@ -20,7 +21,6 @@
     "mongoose": "5.7.3",
     "npm-release": "1.0.0",
     "prettier": "1.18.2",
-    "schematar": "1.5.0",
     "ts-jest": "24.1.0",
     "ts-node": "8.4.1",
     "ts-node-dev": "1.0.0-pre.43",

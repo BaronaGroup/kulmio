@@ -28,7 +28,7 @@ export function validateConfig(config: Config): void {
     case 'V1': {
       const isValid = validateV1(config)
       if (!isValid) {
-        throw new Error('Configuration validation failed: ' + JSON.stringify(ajv.errors, null, 2))
+        throw new Error('Configuration validation failed: ' + JSON.stringify(validateV1.errors, null, 2))
       }
       break
     }

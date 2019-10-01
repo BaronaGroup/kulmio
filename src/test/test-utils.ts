@@ -2,6 +2,7 @@ import { TestServerAPI, startServer, MetaCommand } from './test-server'
 import { WSClientToServerCommand } from './ws-commands'
 import { ServiceConfig } from '../config'
 import { runWithArgs } from '../app'
+import {delay} from '../utils/delay'
 
 export function createTestService(
   name: string,
@@ -107,10 +108,6 @@ export async function until(condition: () => boolean | Promise<boolean>) {
   while (!(await condition())) {
     await delay(10)
   }
-}
-
-export function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 export function runKulmio(configFile: string, command: string, services: string[] = [], args: string[] = []) {

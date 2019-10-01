@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "dependencies": {
     "ajv": "6.10.2",
+    "mongoose": "5.7.3",
     "schematar": "1.5.0",
     "wtfnode": "0.8.0"
   },
@@ -18,7 +19,6 @@
     "@types/websocket": "0.0.40",
     "jest": "24.9.0",
     "mkdirp": "0.5.1",
-    "mongoose": "5.7.3",
     "npm-release": "1.0.0",
     "prettier": "1.18.2",
     "ts-jest": "24.1.0",

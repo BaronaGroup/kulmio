@@ -1,7 +1,7 @@
 import ServerModel from './ServerModel'
 import Service from './Service'
 import cp from 'child_process'
-import { delay } from './test/test-utils'
+import {delay} from './utils/delay'
 
 let path = '../package.json'
 while (true) {

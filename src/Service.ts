@@ -5,6 +5,8 @@ import mkdirp from 'mkdirp'
 import { ServiceConfig } from './config'
 import { RuntimeServerConfig } from './ServerModel'
 
+const HEALTH_TIMEOUT = 5000
+
 export default class Service {
   public readonly config: ServiceConfig
   private serverConfig: RuntimeServerConfig
@@ -79,6 +81,8 @@ export default class Service {
 
     // TODO: add way to get the output
     return new Promise(resolve => {
+      // TODO: kill the child process on timeout
+      setTimeout(() => resolve(false), HEALTH_TIMEOUT)
       cp.exec(
         command,
         {

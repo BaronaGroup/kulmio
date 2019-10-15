@@ -116,5 +116,6 @@ export function runKulmio(configFile: string, command: string, services: string[
     args,
     command,
     services,
+    extraArgs: []
   })
 }

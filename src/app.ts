@@ -1,7 +1,7 @@
 import ServerModel from './ServerModel'
 import Service from './Service'
 import cp from 'child_process'
-import {delay} from './utils/delay'
+import { delay } from './utils/delay'
 
 let path = '../package.json'
 while (true) {
@@ -14,7 +14,7 @@ while (true) {
   }
 }
 
-const validCommands = /status|build|start|run|stop|restart|logs|screen/i
+const validCommands = /status|build|start|run|stop|restart|logs|screen|exec/i
 
 function isValidCommand(potential: string) {
   return validCommands.test(potential)
@@ -82,6 +82,14 @@ export async function runWithArgs(commandLineArgs: Args) {
       await openScreen(services)
       break
     }
+    case 'exec': {
+      await execute(
+        services,
+        commandLineArgs.extraArgs,
+        commandLineArgs.args.includes('-p') || commandLineArgs.args.includes('--parallel')
+      )
+      break
+    }
     default:
       console.log('Invalid command', commandLineArgs.command)
   }
@@ -109,6 +117,13 @@ function parseCommandLine() {
     }
   }
 
+  let extraArgs: string[] = []
+  const tripleDashIndex = rest.indexOf('---')
+  if (tripleDashIndex !== -1) {
+    extraArgs = rest.slice(tripleDashIndex + 1)
+    rest.splice(tripleDashIndex, rest.length)
+  }
+
   const command = rest.shift() || ''
   let args: string[], services: string[]
   if (rest.includes('--')) {
@@ -125,6 +140,7 @@ function parseCommandLine() {
     command,
     args,
     services,
+    extraArgs,
   }
 }
 
@@ -250,4 +266,31 @@ async function openScreen(services: Service[]) {
     return
   }
   cp.execSync('screen -raAd ' + services[0].screenName, { stdio: 'inherit' })
+}
+
+async function execute(services: Service[], command: string[], parallel: boolean) {
+  if (!command.length) {
+    console.log('No command provided. Separate the command from the rest of the command line with a triple dash')
+    console.log(`e.g. ${process.argv[1]} servicename --- ls`)
+    process.exit(1)
+  }
+
+  if (parallel) {
+    console.error('Parallel execution not supported at this time')
+    process.exit(1)
+  }
+
+  let failures = [] as string[]
+
+  for (const service of services) {
+    try {
+      await service.execute(command)
+    } catch (err) {
+      failures.push(service.name)
+    }
+  }
+
+  if (failures.length) {
+    throw new Error('Execution failed for ' + failures.join(', '))
+  }
 }

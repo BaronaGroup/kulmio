@@ -142,6 +142,31 @@ export default class Service {
     }
   }
 
+  public execute(command: string[]) {
+
+    console.log(`-- Executing on ${this.name} --`)
+    const commandPrefix = 'execPrefix' in this.config ? this.config.execPrefix : ''
+
+    const commandString = (commandPrefix ? commandPrefix + ' ' : '') + command.map(commandLineQuotes).join(' ')
+
+    cp.execSync(commandString, {
+      cwd: this.actualWorkDir,
+      env: {
+        ...process.env,
+        ...this.getEnvVariables(),
+      },
+      stdio: 'inherit',
+    })
+
+    function commandLineQuotes(part: string) {
+      if (part.includes(' ') || part.includes('"') || part.includes('\'')) {
+
+      } else {
+        return part
+      }
+    }
+  }
+
   public async stop(force: boolean) {
     if (!force && this.config.stopCommand) {
       cp.execSync(this.config.stopCommand, {

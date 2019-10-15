@@ -1,12 +1,12 @@
 import ServerModel from './ServerModel'
 import Service from './Service'
 import cp from 'child_process'
-import {delay} from './utils/delay'
+import { delay } from './utils/delay'
 
 let path = '../package.json'
 while (true) {
   try {
-    const p = require(path)
+    const p = require(path) // tslint:disable-line
     ;(global as any).kulmioVersion = p.version
     break
   } catch (err) {
@@ -46,7 +46,7 @@ export async function runWithArgs(commandLineArgs: Args) {
     }
     case 'start': {
       if (commandLineArgs.args.includes('--no-dependencies')) {
-        startServicesNoDependencies(services)
+        await startServicesNoDependencies(services)
       } else {
         await startServices(services, model)
       }
@@ -54,7 +54,7 @@ export async function runWithArgs(commandLineArgs: Args) {
     }
     case 'run': {
       if (commandLineArgs.args.includes('--no-dependencies')) {
-        startServicesNoDependencies(services)
+        await startServicesNoDependencies(services)
       } else {
         await startServices(services, model)
       }
@@ -68,7 +68,7 @@ export async function runWithArgs(commandLineArgs: Args) {
     case 'restart': {
       await stopServices(commandLineArgs.args, services)
       if (commandLineArgs.args.includes('--no-dependencies')) {
-        startServicesNoDependencies(services)
+        await startServicesNoDependencies(services)
       } else {
         await startServices(services, model)
       }

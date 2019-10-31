@@ -253,7 +253,8 @@ export default class Service {
       loadEnvFromFile(envDir + '/' + envName + '.env'),
       ...envsFromDirectories,
       loadEnvFromFiles(this.config.envFiles || []),
-      Object.keys(configEnv).map(key => ({ key, value: configEnv[key] }))
+      Object.keys(configEnv).map(key => ({ key, value: configEnv[key] })),
+      Object.entries(process.env).map(([key, value]) => ({ key, value: value as string }))
     )
 
     function combineEnv(...envParts: Array<Array<{ key: string; value: string }>>) {

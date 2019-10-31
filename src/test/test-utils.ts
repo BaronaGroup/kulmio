@@ -3,6 +3,7 @@ import { WSClientToServerCommand } from './ws-commands'
 import { ServiceConfig } from '../config'
 import { runWithArgs } from '../app'
 import { delay } from '../utils/delay'
+import ServerModel from '../ServerModel'
 
 export function createTestService(
   name: string,
@@ -117,5 +118,6 @@ export function runKulmio(configFile: string, command: string, services: string[
     command,
     services,
     extraArgs: [],
+    model: new ServerModel(configFile)
   })
 }

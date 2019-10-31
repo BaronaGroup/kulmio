@@ -147,7 +147,6 @@ export default class Service {
   }
 
   public execute(command: string[]) {
-
     console.log(`-- Executing on ${this.name} --`)
     const commandPrefix = 'execPrefix' in this.config ? this.config.execPrefix : ''
 
@@ -163,8 +162,7 @@ export default class Service {
     })
 
     function commandLineQuotes(part: string) {
-      if (part.includes(' ') || part.includes('"') || part.includes('\'')) {
-
+      if (part.includes(' ') || part.includes('"') || part.includes("'")) {
       } else {
         return part
       }

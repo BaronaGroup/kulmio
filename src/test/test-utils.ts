@@ -2,7 +2,7 @@ import { TestServerAPI, startServer, MetaCommand } from './test-server'
 import { WSClientToServerCommand } from './ws-commands'
 import { ServiceConfig } from '../config'
 import { runWithArgs } from '../app'
-import {delay} from '../utils/delay'
+import { delay } from '../utils/delay'
 
 export function createTestService(
   name: string,
@@ -116,6 +116,6 @@ export function runKulmio(configFile: string, command: string, services: string[
     args,
     command,
     services,
-    extraArgs: []
+    extraArgs: [],
   })
 }

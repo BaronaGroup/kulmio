@@ -17,6 +17,7 @@ while (true) {
   }
 }
 
+const isDigits = /^\d+$/
 const validCommands = /status|build|start|run|stop|restart|logs|screen|exec/i
 
 function isValidCommand(potential: string) {
@@ -132,12 +133,12 @@ function parseCommandLine() {
 
   const tripleDashIndex = rest.indexOf('---')
   let extraArgs: string[] = []
+  const model = new ServerModel(configFile)
 
   if (tripleDashIndex !== -1) {
     extraArgs = rest.slice(tripleDashIndex + 1)
     rest.splice(tripleDashIndex, rest.length)
   } else if (commandIsExecOrGit) {
-    const model = new ServerModel(configFile)
     const firstUnknown = rest.find(entry => !entry.startsWith('-') && !model.isKnownName(entry))
     if (firstUnknown) {
       const foundAt = rest.indexOf(firstUnknown)
@@ -152,8 +153,8 @@ function parseCommandLine() {
     args = rest.slice(0, index)
     services = rest.slice(index + 1)
   } else {
-    args = rest.filter(item => item.startsWith('-'))
-    services = rest.filter(item => !item.startsWith('-'))
+    args = rest.filter(item => item.startsWith('-') || (isDigits.test(item) && !model.isKnownName(item)))
+    services = rest.filter(item => !args.includes(item))
   }
 
   return {
@@ -162,6 +163,7 @@ function parseCommandLine() {
     args,
     services,
     extraArgs,
+    model,
   }
 }
 

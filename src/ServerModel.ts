@@ -31,6 +31,10 @@ export default class ServerModel {
     if (!found) throw new Error('No such service: ' + name)
     return found
   }
+
+  public isKnownName(name: string) {
+    return this.services.some(s => s.name === name || s.aliases.includes(name))
+  }
 }
 
 function loadConfigFile(workingPath: string, filename: string): ConfigServicePair[] {

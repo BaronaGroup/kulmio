@@ -2,6 +2,8 @@ import ServerModel from './ServerModel'
 import Service from './Service'
 import cp from 'child_process'
 import { delay } from './utils/delay'
+import fs from 'fs'
+import { join } from 'path'
 
 let path = '../package.json'
 while (true) {
@@ -90,6 +92,13 @@ export async function runWithArgs(commandLineArgs: Args) {
       )
       break
     }
+    case 'git':
+      await git(
+        services,
+        commandLineArgs.extraArgs,
+        commandLineArgs.args.includes('-p') || commandLineArgs.args.includes('--parallel')
+      )
+      break
     default:
       console.log('Invalid command', commandLineArgs.command)
   }
@@ -117,14 +126,25 @@ function parseCommandLine() {
     }
   }
 
-  let extraArgs: string[] = []
+  const command = rest.shift() || ''
+  const commandIsExecOrGit = ['git', 'exec'].includes(command.toLowerCase())
+
   const tripleDashIndex = rest.indexOf('---')
+  let extraArgs: string[] = []
+
   if (tripleDashIndex !== -1) {
     extraArgs = rest.slice(tripleDashIndex + 1)
     rest.splice(tripleDashIndex, rest.length)
+  } else if (commandIsExecOrGit) {
+    const model = new ServerModel(configFile)
+    const firstUnknown = rest.find(entry => !entry.startsWith('-') && !model.isKnownName(entry))
+    if (firstUnknown) {
+      const foundAt = rest.indexOf(firstUnknown)
+      extraArgs = rest.slice(foundAt)
+      rest.splice(foundAt, rest.length)
+    }
   }
 
-  const command = rest.shift() || ''
   let args: string[], services: string[]
   if (rest.includes('--')) {
     const index = rest.indexOf('--')
@@ -292,5 +312,14 @@ async function execute(services: Service[], command: string[], parallel: boolean
 
   if (failures.length) {
     throw new Error('Execution failed for ' + failures.join(', '))
+  }
+}
+
+async function git(services: Service[], command: string[], parallel: boolean) {
+  const actualServices = services.filter(hasGit)
+  return execute(actualServices, command, parallel)
+
+  function hasGit(service: Service) {
+    return fs.existsSync(join(service.actualWorkDir, '.git'))
   }
 }

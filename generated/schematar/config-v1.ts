@@ -28,7 +28,8 @@ export interface ConfigV1Base<IDType, DateType>
     screenSuffix?: string
     excludeFromAll?: boolean
     groups?: Array<string>
+    execPrefix?: string
   }>
   extends?: Array<string>
 }
-export const configV1Hash = '1140eb15d4f5e8ca33e112b69ecb97027402073aa520e379c74df2825c7c9f1d'
+export const configV1Hash = '9f1feca91b87d1ceb86b1579beccbd06c1ca9d7b6d538842198f34b74705071d'

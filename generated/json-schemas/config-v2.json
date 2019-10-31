@@ -38,71 +38,8 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "name",
-          "command",
-          "workDir"
-        ],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "aliases": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "dependencies": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "envName": {
-            "type": "string"
-          },
-          "useHealthForIsRunning": {
-            "type": "boolean"
-          },
-          "command": {
-            "type": "string"
-          },
-          "stopCommand": {
-            "type": "string"
-          },
-          "healthCommand": {
-            "type": "string"
-          },
-          "build": {
-            "type": "string"
-          },
-          "workDir": {
-            "type": "string"
-          },
-          "env": {},
-          "envFiles": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "screenSuffix": {
-            "type": "string"
-          },
-          "excludeFromAll": {
-            "type": "boolean"
-          },
-          "groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "execPrefix": {
-            "type": "string"
-          }
-        },
+        "required": [],
+        "properties": {},
         "additionalProperties": false
       }
     },

@@ -13,23 +13,8 @@ export interface ConfigV2Base<IDType, DateType>
     screenSuffix?: string
   }
   services: Array<{
-    name: string
-    aliases?: Array<string>
-    dependencies?: Array<string>
-    envName?: string
-    useHealthForIsRunning?: boolean
-    command: string
-    stopCommand?: string
-    healthCommand?: string
-    build?: string
-    workDir: string
-    env?: any
-    envFiles?: Array<string>
-    screenSuffix?: string
-    excludeFromAll?: boolean
-    groups?: Array<string>
-    execPrefix?: string
+
   }>
   extends?: Array<string>
 }
-export const configV2Hash = '51b4457b094f0548778e61e855cd9bf60999d3de44a130b6b2b5079733a605f2'
+export const configV2Hash = '87b8e631111a3e28efe70df0d518de78869b12fa85d5112e75d26630ad741e0b'

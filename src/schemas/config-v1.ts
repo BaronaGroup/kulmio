@@ -10,6 +10,7 @@ export const serviceFieldsV1 = {
   name: String,
   aliases: { type: [String], optional: true },
   dependencies: { type: [String], optional: true },
+  softDependencies: { type: [String], optional: true },
   envName: { type: String, optional: true },
   useHealthForIsRunning: { type: Boolean, optional: true },
   command: String,

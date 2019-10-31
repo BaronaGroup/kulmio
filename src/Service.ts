@@ -32,6 +32,10 @@ export default class Service {
     return this.config.dependencies || []
   }
 
+  get softDependencies() {
+    return this.config.softDependencies || []
+  }
+
   private get pidFile() {
     const pidDir = this.serverConfig.baseDir + '/pids'
     if (!fs.existsSync(pidDir)) mkdirp.sync(pidDir)

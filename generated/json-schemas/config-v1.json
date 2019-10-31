@@ -59,6 +59,12 @@
               "type": "string"
             }
           },
+          "softDependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "envName": {
             "type": "string"
           },

@@ -203,11 +203,18 @@ function startService(service: Service, workingSet: Map<string, Promise<boolean>
         const running = await service.isRunning()
 
         if (!running) {
+          if (service.softDependencies.length) {
+            console.log('Starting soft dependencies')
+            for (const softDep of service.softDependencies) {
+              // No await, we have them start but do not wait
+              startService(model.getService(softDep), workingSet, model)
+            }
+          }
           if (service.dependencies.length) {
             const deps = Promise.all(
               service.dependencies.map(dep => startService(model.getService(dep), workingSet, model))
             )
-            console.log(service.name + ': Waiting for dependencies')
+            console.log(service.name + ': Starting/waiting for dependencies')
             await deps
           }
 

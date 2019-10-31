@@ -35,7 +35,7 @@ const includeRunningOtherServicesFor = ['status', 'stop', 'restart']
 export type Args = ReturnType<typeof parseCommandLine>
 
 export async function runWithArgs(commandLineArgs: Args) {
-  const model = new ServerModel(commandLineArgs.configFile)
+  const model = commandLineArgs.model
   const command = commandLineArgs.command.toLowerCase()
   const services = await getServices(model, commandLineArgs.services, command)
 

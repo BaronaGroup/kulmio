@@ -32,8 +32,16 @@ export default class ServerModel {
     return found
   }
 
+  public getServicesByName(name: string): Service[] {
+    const serviceGroup = this.services.filter(s => s.config.groups && s.config.groups.includes(name))
+    if (serviceGroup.length) return serviceGroup
+    return [this.getService(name)]
+  }
+
   public isKnownName(name: string) {
-    return this.services.some(s => s.name === name || s.aliases.includes(name))
+    return this.services.some(
+      s => s.name === name || s.aliases.includes(name) || (s.config.groups || []).includes(name)
+    )
   }
 }
 

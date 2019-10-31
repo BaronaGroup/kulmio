@@ -4,6 +4,7 @@ import cp from 'child_process'
 import { delay } from './utils/delay'
 import fs from 'fs'
 import { join } from 'path'
+import flatten from './utils/flatten'
 
 let path = '../package.json'
 while (true) {
@@ -265,14 +266,8 @@ async function getServices(model: ServerModel, serviceNames: string[], command: 
 
     return [...baseServices, ...runningPotentiallyExcludedServices]
   }
-  const foundServices = model.services.filter(
-    service =>
-      service.aliases.some(alias => serviceNames.includes(alias)) ||
-      (service.config.groups || []).some(group => serviceNames.includes(group))
-  )
-  const missingServices = serviceNames.filter(sn => foundServices.every(found => found.name !== sn))
-  if (missingServices.length) throw new Error('No such services services: ' + missingServices.join(' '))
-  return foundServices
+
+  return flatten(serviceNames.map(name => model.getServicesByName(name)))
 }
 
 async function logs(args: string[], services: Service[]) {

@@ -222,13 +222,19 @@ function startService(service: Service, workingSet: Map<string, Promise<boolean>
           await service.start()
         }
 
-        if ((await service.isHealthy()) === false) {
+        const initiallyHealthy = (await service.isHealthy()) !== false
+        if (!initiallyHealthy) {
           console.log(service.name + ': Waiting until healthy...')
           do {
             await delay(500)
           } while ((await service.isHealthy()) === false)
         }
-        console.log(service.name + ': Started')
+
+        if (running && initiallyHealthy) {
+          console.log(service.name + ': Already running')
+        } else {
+          console.log(service.name + ': Started')
+        }
 
         resolve(true)
       } catch (err) {

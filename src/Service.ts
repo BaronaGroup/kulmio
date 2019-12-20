@@ -259,10 +259,14 @@ export default class Service {
       const output: Record<string, string> = {}
       for (const part of envParts) {
         for (const envVar of part) {
-          output[envVar.key] = envVar.value.replace(/\$(?:(\w+)|{(.+?)})/g, (_fullMatch, b, c) => {
-            const variable = b || c
-            return output[variable] || process.env[variable] || ''
-          })
+          if (envVar.key.endsWith('!')) {
+            output[envVar.key.substring(0, envVar.key.length - 1)] = envVar.value
+          } else {
+            output[envVar.key] = envVar.value.replace(/\$(?:(\w+)|{(.+?)})/g, (_fullMatch, b, c) => {
+              const variable = b || c
+              return output[variable] || process.env[variable] || ''
+            })
+          }
         }
       }
       return output

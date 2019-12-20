@@ -1,6 +1,6 @@
 {
   "name": "kulmio",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "dependencies": {
     "ajv": "6.10.2",
     "schematar": "1.6.0",

@@ -12,7 +12,7 @@
   },
   "repository": "BaronaGroup/kulmio",
   "devDependencies": {
-    "@types/jest": "24.0.21",
+    "@types/jest": "24.9.1",
     "@types/mkdirp": "0.5.2",
     "@types/node": "10.14.17",
     "@types/websocket": "1.0.0",

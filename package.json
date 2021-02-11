@@ -2,7 +2,7 @@
   "name": "kulmio",
   "version": "0.3.0",
   "dependencies": {
-    "ajv": "6.10.2",
+    "ajv": "7.1.0",
     "schematar": "1.6.0",
     "wtfnode": "0.8.0"
   },

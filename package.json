@@ -4,7 +4,7 @@
   "dependencies": {
     "ajv": "6.10.2",
     "schematar": "1.6.0",
-    "wtfnode": "0.8.0"
+    "wtfnode": "0.9.1"
   },
   "license": "mit",
   "author": {

@@ -16,7 +16,7 @@
     "@types/mkdirp": "0.5.2",
     "@types/node": "10.14.17",
     "@types/websocket": "1.0.0",
-    "jest": "24.9.0",
+    "jest": "26.0.0",
     "mkdirp": "0.5.1",
     "npm-release": "1.0.0",
     "prettier": "1.18.2",

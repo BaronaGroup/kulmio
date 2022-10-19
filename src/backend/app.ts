@@ -1,9 +1,11 @@
-import ServerModel from './ServerModel'
-import Service from './Service'
 import cp from 'child_process'
-import { delay } from './utils/delay'
 import fs from 'fs'
 import { join } from 'path'
+
+import ServerModel from './ServerModel'
+import Service from './Service'
+import { startUIRunner } from './ui-backend/ui-runner'
+import { delay } from './utils/delay'
 import flatten from './utils/flatten'
 
 let path = '../package.json'
@@ -101,6 +103,9 @@ export async function runWithArgs(commandLineArgs: Args) {
         commandLineArgs.args.includes('-p') || commandLineArgs.args.includes('--parallel')
       )
       break
+    case 'ui':
+      startUIRunner(model)
+      break
     default:
       console.log('Invalid command', commandLineArgs.command)
   }
@@ -108,7 +113,7 @@ export async function runWithArgs(commandLineArgs: Args) {
 }
 
 if (!process.env.KULMIO_API_MODE) {
-  run().catch(err => {
+  run().catch((err) => {
     console.error(err.message, err.stack)
     process.exit(99)
   })
@@ -139,7 +144,7 @@ function parseCommandLine() {
     extraArgs = rest.slice(tripleDashIndex + 1)
     rest.splice(tripleDashIndex, rest.length)
   } else if (commandIsExecOrGit) {
-    const firstUnknown = rest.find(entry => !entry.startsWith('-') && !model.isKnownName(entry))
+    const firstUnknown = rest.find((entry) => !entry.startsWith('-') && !model.isKnownName(entry))
     if (firstUnknown) {
       const foundAt = rest.indexOf(firstUnknown)
       extraArgs = rest.slice(foundAt)
@@ -153,8 +158,8 @@ function parseCommandLine() {
     args = rest.slice(0, index)
     services = rest.slice(index + 1)
   } else {
-    args = rest.filter(item => item.startsWith('-') || (isDigits.test(item) && !model.isKnownName(item)))
-    services = rest.filter(item => !args.includes(item))
+    args = rest.filter((item) => item.startsWith('-') || (isDigits.test(item) && !model.isKnownName(item)))
+    services = rest.filter((item) => !args.includes(item))
   }
 
   return {
@@ -172,7 +177,7 @@ function looksLikeConfigFile(fn: string) {
 }
 
 async function serviceStatus(services: Service[]) {
-  const statuses = services.map(service => ({ service, status: service.getStatus() }))
+  const statuses = services.map((service) => ({ service, status: service.getStatusString() }))
   for (const { service, status } of statuses) {
     console.log(service.name, await status)
   }
@@ -191,7 +196,7 @@ async function startServicesNoDependencies(services: Service[]) {
 }
 async function startServices(services: Service[], model: ServerModel) {
   const workingSet = new Map<string, Promise<boolean>>()
-  const mainPromises = services.map(service => startService(service, workingSet, model))
+  const mainPromises = services.map((service) => startService(service, workingSet, model))
   await Promise.all(mainPromises)
 }
 
@@ -214,7 +219,7 @@ function startService(service: Service, workingSet: Map<string, Promise<boolean>
           }
           if (service.dependencies.length) {
             const deps = Promise.all(
-              service.dependencies.map(dep => startService(model.getService(dep), workingSet, model))
+              service.dependencies.map((dep) => startService(model.getService(dep), workingSet, model))
             )
             console.log(service.name + ': Starting/waiting for dependencies')
             await deps
@@ -269,24 +274,24 @@ async function stopServices(args: string[], services: Service[]) {
 
 async function getServices(model: ServerModel, serviceNames: string[], command: string): Promise<Service[]> {
   if (!serviceNames.length) {
-    const baseServices = model.services.filter(service => !service.config.excludeFromAll)
+    const baseServices = model.services.filter((service) => !service.config.excludeFromAll)
     if (!includeRunningOtherServicesFor.includes(command)) return baseServices
 
-    const potentiallyExcludedServices = model.services.filter(service => service.config.excludeFromAll),
-      runningPotentiallyExcludedServices = (await Promise.all(
-        potentiallyExcludedServices.map(service => service.isRunning())
-      ))
+    const potentiallyExcludedServices = model.services.filter((service) => service.config.excludeFromAll),
+      runningPotentiallyExcludedServices = (
+        await Promise.all(potentiallyExcludedServices.map((service) => service.isRunning()))
+      )
         .map((running, i) => running && potentiallyExcludedServices[i])
-        .filter(running => running) as Service[]
+        .filter((running) => running) as Service[]
 
     return [...baseServices, ...runningPotentiallyExcludedServices]
   }
 
-  return flatten(serviceNames.map(name => model.getServicesByName(name)))
+  return flatten(serviceNames.map((name) => model.getServicesByName(name)))
 }
 
 async function logs(args: string[], services: Service[]) {
-  const logfiles = services.map(service => service.logFile)
+  const logfiles = services.map((service) => service.logFile)
   cp.execSync('tail ' + args.join(' ') + ' -- ' + logfiles.join(' '), { stdio: 'inherit' })
 }
 
@@ -310,7 +315,7 @@ async function execute(services: Service[], command: string[], parallel: boolean
     process.exit(1)
   }
 
-  let failures = [] as string[]
+  const failures = [] as string[]
 
   for (const service of services) {
     try {

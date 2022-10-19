@@ -1,0 +1,35 @@
+import { useEffect } from 'react'
+
+import { CommandSet } from '../components/CommandSet'
+import { Service } from '../data/DataContext'
+import { SelectionCheckbox } from '../selection/SelectionCheckbox'
+import { useIsSelected } from '../selection/SelectionContext'
+import { socket } from '../socketio'
+import { getStatusBorderColorClass } from '../visuals/getStatusBorderColorClass'
+import { getStatusBoxClasses } from '../visuals/getStatusTextColorClass'
+
+export const ServicePanel: React.FC<{ service: Service; highlight?: boolean }> = ({ service, highlight }) => {
+  const isSelected = useIsSelected(service.name)
+
+  useEffect(() => {
+    if (service.status === 'UNKNOWN') {
+      socket.emit('checkServiceStatus', { service: service.name })
+    }
+  }, [service.name, service.status])
+  return (
+    <div
+      className={`w-64 ${isSelected ? 'border-2 bg-slate-100' : 'border-2'} 
+      ${highlight ? 'bg-sky-100' : ''}
+        rounded-md h-12 m-2 group ${getStatusBorderColorClass(service.status)} flex pl-2 items-center`}
+    >
+      <SelectionCheckbox item={service.name} />
+      <span className="mx-2 grow text-left">{service.name}</span>
+      <div className={'flex flex-col self-stretch'}>
+        <div className="group-hover:opacity-100 opacity-20 transition-opacity grow">
+          <CommandSet />
+        </div>
+        <div className={`${getStatusBoxClasses(service.status)}`}>{service.status.toLowerCase()}</div>
+      </div>
+    </div>
+  )
+}

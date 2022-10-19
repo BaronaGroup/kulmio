@@ -30,6 +30,9 @@
         },
         "screenSuffix": {
           "type": "string"
+        },
+        "uiPort": {
+          "type": "number"
         }
       },
       "additionalProperties": false
@@ -122,6 +125,5 @@
   "required": [
     "schema",
     "services"
-  ],
-  "additionalProperties": false
+  ]
 }

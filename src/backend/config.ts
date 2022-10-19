@@ -1,9 +1,9 @@
-import { ConfigV1Base, configV1Hash } from '../generated/schematar/config-v1'
-import { ConfigV2Base, configV2Hash } from '../generated/schematar/config-v2'
+import { ConfigV1Base, configV1Hash } from '../../generated/schematar/config-v1'
+import { ConfigV2Base, configV2Hash } from '../../generated/schematar/config-v2'
 import { hashSchema } from 'schematar'
 import v1, { configTokensV1 } from './schemas/config-v1'
-import v1json from '../generated/json-schemas/config-v1.json'
-import v2json from '../generated/json-schemas/config-v2.json'
+import v1json from '../../generated/json-schemas/config-v1.json'
+import v2json from '../../generated/json-schemas/config-v2.json'
 import Ajv from 'ajv'
 import v2, { configTokensV2 } from './schemas/config-v2'
 

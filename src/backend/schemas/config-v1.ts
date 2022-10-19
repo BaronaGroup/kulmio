@@ -1,10 +1,11 @@
-import { Schema, Complex } from 'schematar'
+import { Complex, Schema } from 'schematar'
 
 export const configFieldsV1 = {
   envDirectories: { type: [String], optional: true },
   envFiles: { type: [String], optional: true },
   baseDir: { type: String, optional: true },
   screenSuffix: { type: String, optional: true },
+  uiPort: { type: Number, optional: true },
 }
 export const serviceFieldsV1 = {
   name: String,

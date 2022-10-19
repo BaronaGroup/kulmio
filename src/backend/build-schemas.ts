@@ -1,16 +1,18 @@
+import fs from 'fs'
+
+import { createJSONSchema, createTypescriptInterfaceDefinition } from 'schematar'
+
 import v1Schema from './schemas/config-v1'
 import v2Schema from './schemas/config-v2'
-import { createTypescriptInterfaceDefinition, createJSONSchema } from 'schematar'
 import mkdirp = require('mkdirp')
-import fs from 'fs'
 
 const schemas = [
   { name: 'config-v1', schema: v1Schema, interface: 'ConfigV1' },
   { name: 'config-v2', schema: v2Schema, interface: 'ConfigV2' },
 ]
 
-const interfaceDir = __dirname + '/../generated/schematar',
-  jsonSchemaDir = __dirname + '/../generated/json-schemas'
+const interfaceDir = __dirname + '/../../generated/schematar',
+  jsonSchemaDir = __dirname + '/../../generated/json-schemas'
 
 mkdirp.sync(interfaceDir)
 mkdirp.sync(jsonSchemaDir)

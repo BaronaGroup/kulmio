@@ -11,6 +11,7 @@ export interface ConfigV1Base<IDType, DateType>
     envFiles?: Array<string>
     baseDir?: string
     screenSuffix?: string
+    uiPort?: number
   }
   services: Array<{
     name: string
@@ -33,4 +34,4 @@ export interface ConfigV1Base<IDType, DateType>
   }>
   extends?: Array<string>
 }
-export const configV1Hash = '5839c6485c1b9e36dbb5cde4537ffd3b3c43179cb6d43d479d69e9dbeff76c64'
+export const configV1Hash = 'b0735d575913782d5c5d31b1e2f0737610a4238ff459b8258e63ada6a81a0bce'

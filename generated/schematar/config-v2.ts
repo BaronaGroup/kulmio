@@ -11,10 +11,11 @@ export interface ConfigV2Base<IDType, DateType>
     envFiles?: Array<string>
     baseDir?: string
     screenSuffix?: string
+    uiPort?: number
   }
   services: Array<{
 
   }>
   extends?: Array<string>
 }
-export const configV2Hash = '87b8e631111a3e28efe70df0d518de78869b12fa85d5112e75d26630ad741e0b'
+export const configV2Hash = 'c3f1fb3092ce2363b388873e3e052decec0605cbb99c227ef7a9f180ff41213e'

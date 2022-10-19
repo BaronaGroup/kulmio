@@ -1,7 +1,9 @@
 import http from 'http'
-import { server as WebSocketServer, connection as WebSocketConnection } from 'websocket'
-import { WSClientToServerCommand, WSServerToClientCommand } from './ws-commands'
+
+import { connection as WebSocketConnection, server as WebSocketServer } from 'websocket'
+
 import { PromisedType } from '../types'
+import { WSClientToServerCommand, WSServerToClientCommand } from './ws-commands'
 
 interface ConnectionClosed {
   command: 'connection-closed'
@@ -19,7 +21,7 @@ export async function startServer(port: number, handleCommand: HandleCommandFn) 
     response.end()
   })
 
-  await new Promise((resolve, reject) => server.listen(port, (err: any) => (err ? reject(err) : resolve())))
+  await new Promise<void>((resolve) => server.listen(port, resolve))
 
   const wsServer = new WebSocketServer({
     httpServer: server,
@@ -28,12 +30,12 @@ export async function startServer(port: number, handleCommand: HandleCommandFn) 
 
   const connections = new Map<string, WebSocketConnection>()
 
-  wsServer.on('request', request => {
+  wsServer.on('request', (request) => {
     const connection = request.accept('test-app')
 
     let clientId: string
 
-    connection.on('message', message => {
+    connection.on('message', (message) => {
       if (message.type === 'utf8') {
         const command = JSON.parse(message.utf8Data as string) as WSClientToServerCommand
 

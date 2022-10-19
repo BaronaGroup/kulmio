@@ -1,7 +1,11 @@
-import fs from 'fs'
 import cp from 'child_process'
+import fs from 'fs'
 import path from 'path'
+
 import mkdirp from 'mkdirp'
+
+import { ServiceStatus } from '../common/types'
+import { ensureIsNever } from '../ui/utils/ensureIsNever'
 import { ServiceConfig } from './config'
 import { RuntimeServerConfig } from './ServerModel'
 
@@ -53,25 +57,55 @@ export default class Service {
     return path.resolve(this.serverConfig.baseDir, this.config.workDir)
   }
 
-  public async getStatus() {
+  public async getStatus(): Promise<ServiceStatus> {
     const pid = await this.getPid()
     const healthy = this.config.healthCommand && (await this.isHealthy())
     if (!pid && this.config.useHealthForIsRunning && healthy) {
-      return 'Running externally'
+      return 'EXTERNAL'
     } else if (pid) {
-      return 'Running #' + pid + ' ' + (this.config.healthCommand ? (healthy ? 'Healthy' : 'NOT HEALTHY') : '')
+      if (!this.config.healthCommand) {
+        return 'RUNNING'
+      }
+      if (healthy) return 'RUNNING:HEALTHY'
+      return 'UNHEALTHY'
     } else {
-      return 'Stopped'
+      return 'STOPPED'
+    }
+  }
+
+  public async getStatusString() {
+    const status = await this.getStatus()
+
+    switch (status) {
+      case 'EXTERNAL':
+        return 'Running externally'
+      case 'RUNNING':
+        return 'Running'
+      case 'RUNNING:HEALTHY':
+        return 'Running, healthy'
+      case 'UNHEALTHY':
+        return 'Running, NOT HEALTHY'
+      case 'STOPPED':
+        return 'Stopped'
+      case 'UNKNOWN':
+        return 'Unknown'
+      case 'PENDING':
+        return 'Being started'
+      case 'WAITING_DEPS':
+        return 'Waiting for dependencies'
+      default:
+        ensureIsNever(status)
+        throw new Error('Non-exhaustive switch')
     }
   }
 
   public async getPid() {
     if (!fs.existsSync(this.pidFile)) return null
-    const pid = fs.readFileSync(this.pidFile, 'UTF-8')
+    const pid = fs.readFileSync(this.pidFile, 'utf-8')
     if (!pid) return null
-    const running = await new Promise(resolve => {
+    const running = await new Promise((resolve) => {
       const child = cp.exec('ps -p ' + pid)
-      child.on('exit', code => {
+      child.on('exit', (code) => {
         if (code === 1) resolve(false)
         else resolve(true)
       })
@@ -84,7 +118,7 @@ export default class Service {
     if (!command) return undefined
 
     // TODO: add way to get the output
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // TODO: kill the child process on timeout
       setTimeout(() => resolve(false), HEALTH_TIMEOUT)
       cp.exec(
@@ -142,7 +176,7 @@ export default class Service {
     const pid = child.pid
     child.unref()
     if (pid) {
-      fs.writeFileSync(this.pidFile, pid.toString(), 'UTF-8')
+      fs.writeFileSync(this.pidFile, pid.toString(), 'utf-8')
     }
   }
 
@@ -163,6 +197,7 @@ export default class Service {
 
     function commandLineQuotes(part: string) {
       if (part.includes(' ') || part.includes('"') || part.includes("'")) {
+        // TODO: implement, presumably
       } else {
         return part
       }
@@ -191,9 +226,9 @@ export default class Service {
       // cp.execSync(`screen -XS ${this.screenName} quit`)
       killMany([pid, ...getChildren(pid)])
       while (await this.isRunning()) {
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise((resolve) => setTimeout(resolve, 100))
       }
-      fs.writeFileSync(this.pidFile, '', 'UTF-8')
+      fs.writeFileSync(this.pidFile, '', 'utf-8')
       console.log('Stopped ' + this.name)
     }
 
@@ -218,8 +253,8 @@ export default class Service {
           .execSync(`pgrep -P ${parentPid}`)
           .toString('utf-8')
           .split('\n')
-          .filter(x => x)
-        return a.map(l => +l)
+          .filter((x) => x)
+        return a.map((l) => +l)
       } catch (err) {
         return []
       }
@@ -237,9 +272,9 @@ export default class Service {
     const baseDir = this.serverConfig.baseDir
     const envDir = baseDir + '/envs'
 
-    const globalEnvs = (this.serverConfig.envDirectories || []).map(ed => loadEnvFromFile(`${ed}/global.env`))
+    const globalEnvs = (this.serverConfig.envDirectories || []).map((ed) => loadEnvFromFile(`${ed}/global.env`))
     const envName = this.config.envName || this.config.name
-    const envsFromDirectories = (this.serverConfig.envDirectories || []).map(ed =>
+    const envsFromDirectories = (this.serverConfig.envDirectories || []).map((ed) =>
       loadEnvFromFile(`${ed}/${envName}.env`)
     )
     const configEnv: Record<string, string> = this.config.env || {}
@@ -251,7 +286,7 @@ export default class Service {
       loadEnvFromFile(envDir + '/' + envName + '.env'),
       ...envsFromDirectories,
       loadEnvFromFiles(this.config.envFiles || []),
-      Object.keys(configEnv).map(key => ({ key, value: configEnv[key] })),
+      Object.keys(configEnv).map((key) => ({ key, value: configEnv[key] })),
       Object.entries(process.env).map(([key, value]) => ({ key, value: value as string }))
     )
 
@@ -278,17 +313,15 @@ export default class Service {
       if (!fs.existsSync(fullName)) {
         return []
       }
-      const data = fs.readFileSync(fullName, 'UTF-8')
+      const data = fs.readFileSync(fullName, 'utf-8')
       return data
         .split(/[\r\n]+/)
-        .map(l => l.trim())
-        .filter(s => !!s)
-        .map(e => {
-          let [key, value] = (e.match(/^(.+?)=(.+)$/) || []).slice(1)
-          if (value) {
-            value = value.replace(/__DIRNAME__/g, dirname)
-          }
-          return { key, value }
+        .map((l) => l.trim())
+        .filter((s) => !!s)
+        .map((e) => {
+          const [key, value] = (e.match(/^(.+?)=(.+)$/) || []).slice(1)
+
+          return { key, value: value?.replace(/__DIRNAME__/g, dirname) }
         })
         .filter(({ value }) => value !== undefined)
     }

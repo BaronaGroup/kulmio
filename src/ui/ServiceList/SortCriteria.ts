@@ -6,11 +6,15 @@ export const enum SortCriteria {
 }
 
 const statusPriorities: { [K in Service['status']]: number } = {
+  EXTERNAL: 1,
   RUNNING: 1,
-  ERROR: 2,
+  'RUNNING:HEALTHY': 1,
+  UNHEALTHY: 2,
   PENDING: 3,
   WAITING_DEPS: 4,
+  STOPPING: 10,
   STOPPED: 10,
+  UNKNOWN: 12,
 }
 
 export const sortFunctions = {

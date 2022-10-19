@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { CommandSet } from '../components/CommandSet'
 import { Service } from '../data/DataContext'
@@ -16,6 +16,8 @@ export const ServicePanel: React.FC<{ service: Service; highlight?: boolean }> =
       socket.emit('checkServiceStatus', { service: service.name })
     }
   }, [service.name, service.status])
+
+  const serviceNameInArray = useMemo(() => [service.name], [service.name])
   return (
     <div
       className={`w-64 ${isSelected ? 'border-2 bg-slate-100' : 'border-2'} 
@@ -26,7 +28,7 @@ export const ServicePanel: React.FC<{ service: Service; highlight?: boolean }> =
       <span className="mx-2 grow text-left">{service.name}</span>
       <div className={'flex flex-col self-stretch'}>
         <div className="group-hover:opacity-100 opacity-20 transition-opacity grow">
-          <CommandSet />
+          <CommandSet services={serviceNameInArray} />
         </div>
         <div className={`${getStatusBoxClasses(service.status)}`}>{service.status.toLowerCase()}</div>
       </div>

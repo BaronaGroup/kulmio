@@ -4,6 +4,7 @@ export type ServiceStatus =
   | 'EXTERNAL'
   | 'PENDING'
   | 'WAITING_DEPS'
+  | 'STOPPING'
   | 'STOPPED'
   | 'UNHEALTHY'
   | 'UNKNOWN'

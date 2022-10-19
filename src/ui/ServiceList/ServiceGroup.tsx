@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import React, { useMemo, useReducer } from 'react'
 
 import { CommandSet } from '../components/CommandSet'
 import { ServicePanel } from './ServicePanel'
@@ -6,6 +6,8 @@ import type { ServiceGroup as ServiceGroupType } from './useServiceControls'
 
 export const ServiceGroup: React.FC<{ group: ServiceGroupType; vertical?: boolean }> = ({ group, vertical }) => {
   const [highlight, toggleHighlight] = useReducer((v) => !v, false)
+
+  const serviceNames = useMemo(() => group.services.map((s) => s.name), [group.services])
 
   return (
     <div key={group.name}>
@@ -15,7 +17,7 @@ export const ServiceGroup: React.FC<{ group: ServiceGroupType; vertical?: boolea
           onMouseEnter={toggleHighlight}
           onMouseLeave={toggleHighlight}
         >
-          <CommandSet />
+          <CommandSet services={serviceNames} />
         </div>
         {group.name}
       </h2>

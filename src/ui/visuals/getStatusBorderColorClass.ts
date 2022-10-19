@@ -8,6 +8,7 @@ export function getStatusBorderColorClass(status: Service['status']): string {
     case 'PENDING':
       return 'border-yellow-500'
     case 'STOPPED':
+    case 'STOPPING':
       return 'border-zinc-500'
     case 'WAITING_DEPS':
       return 'border-slate-500'

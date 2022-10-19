@@ -16,7 +16,7 @@ export const SelectedItemTools: React.FC = () => {
 
   return (
     <div className="fixed bottom-0 bg-slate-200 left-0 right-0 py-4">
-      {selected.length} {selected.length === 1 ? 'service' : 'services'} selected. <CommandSet />
+      {selected.length} {selected.length === 1 ? 'service' : 'services'} selected. <CommandSet services={selected} />
       <ActionButton onClick={unselectAll}>Unselect all</ActionButton>
     </div>
   )

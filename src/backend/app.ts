@@ -4,8 +4,8 @@ import { join } from 'path'
 
 import ServerModel from './ServerModel'
 import Service from './Service'
+import { startServices } from './startService'
 import { startUIRunner } from './ui-backend/ui-runner'
-import { delay } from './utils/delay'
 import flatten from './utils/flatten'
 
 let path = '../package.json'
@@ -193,63 +193,6 @@ async function startServicesNoDependencies(services: Service[]) {
       await service.start()
     }
   }
-}
-async function startServices(services: Service[], model: ServerModel) {
-  const workingSet = new Map<string, Promise<boolean>>()
-  const mainPromises = services.map((service) => startService(service, workingSet, model))
-  await Promise.all(mainPromises)
-}
-
-function startService(service: Service, workingSet: Map<string, Promise<boolean>>, model: ServerModel) {
-  const promise = workingSet.get(service.name)
-  if (promise) return promise
-  workingSet.set(
-    service.name,
-    new Promise(async (resolve, reject) => {
-      try {
-        const running = await service.isRunning()
-
-        if (!running) {
-          if (service.softDependencies.length) {
-            console.log('Starting soft dependencies')
-            for (const softDep of service.softDependencies) {
-              // No await, we have them start but do not wait
-              startService(model.getService(softDep), workingSet, model)
-            }
-          }
-          if (service.dependencies.length) {
-            const deps = Promise.all(
-              service.dependencies.map((dep) => startService(model.getService(dep), workingSet, model))
-            )
-            console.log(service.name + ': Starting/waiting for dependencies')
-            await deps
-          }
-
-          console.log(service.name + ': Starting...')
-          await service.start()
-        }
-
-        const initiallyHealthy = (await service.isHealthy()) !== false
-        if (!initiallyHealthy) {
-          console.log(service.name + ': Waiting until healthy...')
-          do {
-            await delay(500)
-          } while ((await service.isHealthy()) === false)
-        }
-
-        if (running && initiallyHealthy) {
-          console.log(service.name + ': Already running')
-        } else {
-          console.log(service.name + ': Started')
-        }
-
-        resolve(true)
-      } catch (err) {
-        reject(err)
-      }
-    })
-  )
-  return workingSet.get(service.name)
 }
 
 async function buildServices(services: Service[]) {

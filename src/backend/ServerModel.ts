@@ -49,6 +49,7 @@ export default class ServerModel {
 }
 
 function loadConfigFile(workingPath: string, filename: string): ConfigServicePair[] {
+  process.env.KULMIO_MAX_CONFIG_VERSION = '3'
   const configPath = path.resolve(workingPath, filename)
   const rawConfig = require(configPath) as ConfigFile as any
   const config: Config = rawConfig.kulmioConfig || rawConfig.kulmio || rawConfig.default || rawConfig

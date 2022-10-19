@@ -37,6 +37,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useSocketEventHandler(
     'updateServiceStatus',
     useCallback((update) => {
+      console.log(update)
       setServices(
         (oldServices) =>
           oldServices && [...oldServices.map((s) => (s.name !== update.service ? s : { ...s, status: update.status }))]

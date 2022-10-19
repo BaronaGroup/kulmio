@@ -7,6 +7,7 @@ import mkdirp from 'mkdirp'
 import { ServiceStatus } from '../common/types'
 import { ensureIsNever } from '../ui/utils/ensureIsNever'
 import { ServiceConfig } from './config'
+import { logEvent } from './eventLogger'
 import { RuntimeServerConfig } from './ServerModel'
 
 const HEALTH_TIMEOUT = 5000
@@ -58,6 +59,12 @@ export default class Service {
   }
 
   public async getStatus(): Promise<ServiceStatus> {
+    const status = await this.getStatusImpl()
+    logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status })
+    return status
+  }
+
+  private async getStatusImpl(): Promise<ServiceStatus> {
     const pid = await this.getPid()
     const healthy = this.config.healthCommand && (await this.isHealthy())
     if (!pid && this.config.useHealthForIsRunning && healthy) {
@@ -85,6 +92,8 @@ export default class Service {
         return 'Running, healthy'
       case 'UNHEALTHY':
         return 'Running, NOT HEALTHY'
+      case 'STOPPING':
+        return 'Stopping'
       case 'STOPPED':
         return 'Stopped'
       case 'UNKNOWN':
@@ -163,6 +172,7 @@ export default class Service {
   }
 
   public async start() {
+    logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'PENDING' })
     const command = this.config.command + ' 2>&1 | tee -a ' + this.logFile
     const child = cp.spawn('screen', ['-D', '-m', '-S', this.screenName, 'bash', '-c', command], {
       cwd: this.actualWorkDir,
@@ -205,6 +215,7 @@ export default class Service {
   }
 
   public async stop(force: boolean) {
+    logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPING' })
     if (!force && this.config.stopCommand) {
       cp.execSync(this.config.stopCommand, {
         cwd: this.actualWorkDir,
@@ -214,8 +225,10 @@ export default class Service {
         },
         stdio: 'inherit',
       })
+      logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPED' })
     } else {
-      return await this.kill(force)
+      await this.kill(force)
+      logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPED' })
     }
   }
 

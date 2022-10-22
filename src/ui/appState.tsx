@@ -9,7 +9,17 @@ export enum ServiceViewMode {
   CLUSTERED = 'CLUSTERED',
 }
 
+export enum TopLevelView {
+  SERVICES = 'SERVICES',
+  LOGS = 'LOGS',
+}
+
 const appStateSchema = z.object({
+  global: z
+    .object({
+      activeView: z.nativeEnum(TopLevelView).default(TopLevelView.SERVICES),
+    })
+    .default({}),
   serviceView: z
     .object({
       groupsEnabled: z.boolean().default(true),
@@ -46,6 +56,7 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const updateState = useCallback((newState: DeepPartialAppState) => {
     setState((oldState) => ({
+      global: { ...oldState.global, ...newState.global },
       serviceView: { ...oldState.serviceView, ...newState.serviceView },
     }))
   }, [])

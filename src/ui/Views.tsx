@@ -1,27 +1,23 @@
-import React, { useState } from 'react'
+import React from 'react'
 
+import { TopLevelView, useAppState } from './appState'
 import { Select, SelectOption } from './components/Select'
 import { LogView } from './LogView/LogView'
 import { ServiceList } from './ServiceList/ServiceList'
 
-const enum View {
-  SERVICES = 'SERVICES',
-  LOGS = 'LOGS',
-}
-
-const viewOptions: Array<SelectOption<View>> = [
-  { label: 'Services', value: View.SERVICES },
-  { label: 'Logs', value: View.LOGS },
+const viewOptions: Array<SelectOption<TopLevelView>> = [
+  { label: 'Services', value: TopLevelView.SERVICES },
+  { label: 'Logs', value: TopLevelView.LOGS },
 ]
 
 export const Views: React.FC = () => {
-  const [view, setView] = useState<View>(View.SERVICES)
+  const [view, setView] = useAppState('global.activeView')
   return (
     <div>
       <Select options={viewOptions} value={view} onChange={setView} />
       <div>
-        {view === View.SERVICES && <ServiceList />}
-        {view === View.LOGS && <LogView />}
+        {view === TopLevelView.SERVICES && <ServiceList />}
+        {view === TopLevelView.LOGS && <LogView />}
       </div>
     </div>
   )

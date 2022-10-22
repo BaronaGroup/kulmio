@@ -21,6 +21,7 @@ const appStateSchema = z.object({
       activeView: z.nativeEnum(TopLevelView).default(TopLevelView.SERVICES),
     })
     .default({}),
+
   serviceView: z
     .object({
       groupsEnabled: z.boolean().default(true),
@@ -28,6 +29,14 @@ const appStateSchema = z.object({
       sortCriteria: z.nativeEnum(SortCriteria).default(SortCriteria.NAME),
     })
     .optional()
+    .default({}),
+
+  logView: z
+    .object({
+      isTailing: z.boolean().default(true),
+      pausedAt: z.string().optional(),
+      numberOfLines: z.number().default(500),
+    })
     .default({}),
 })
 
@@ -67,6 +76,7 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }
     setState((oldState) => ({
       global: { ...oldState.global, ...newState.global },
       serviceView: { ...oldState.serviceView, ...newState.serviceView },
+      logView: { ...oldState.logView, ...newState.logView },
     }))
   }, [])
 

@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { TopLevelView, useAppState } from './appState'
 import { Select, SelectOption } from './components/Select'
 

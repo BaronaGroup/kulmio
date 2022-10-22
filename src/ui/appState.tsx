@@ -1,3 +1,4 @@
+import JsonURL from '@jsonurl/jsonurl'
 import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import z from 'zod'
 
@@ -45,9 +46,17 @@ interface Ctx {
 
 const context = React.createContext<Ctx>(null as any)
 
+const urlRegex = /(?<=[&?]state=)([^&]+)/
+
 export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const initialState = useMemo<AppState>(() => {
-    const data = JSON.parse(localStorage.getItem(localStorageName) || '{}')
+    const data = (() => {
+      const searchParam = document.location.search.match(urlRegex)
+      if (searchParam && searchParam[1]) {
+        return JsonURL.parse(searchParam[1], { AQF: true })
+      }
+      return JSON.parse(localStorage.getItem(localStorageName) || '{}')
+    })()
     const parsed = appStateSchema.safeParse(data)
     return parsed.success ? parsed.data : defaultState
   }, [])
@@ -63,6 +72,14 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   useEffect(() => {
     localStorage.setItem(localStorageName, JSON.stringify(state))
+    const searchParam = document.location.search.match(urlRegex)
+    const newParam = JsonURL.stringify(state, { AQF: true })
+    const url = document.location.href
+    if (searchParam && newParam && newParam !== searchParam[0]) {
+      history.pushState({}, '', url.replace(urlRegex, newParam))
+    } else {
+      history.pushState({}, '', url + (url.includes('?') ? '&' : '?') + 'state=' + newParam)
+    }
   }, [state])
 
   const value = useMemo<Ctx>(() => ({ data: state, updateState }), [state, updateState])

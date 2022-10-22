@@ -34,7 +34,7 @@ const exampleData = [
 export const LogData: React.FC<{ services: string[] }> = ({ services }) => {
   const entries = exampleData.filter((l) => services.includes(l.service))
   return (
-    <div className="text-left bg-black text-white p-4 grow">
+    <div className="text-left p-4 grow">
       {entries.map((entry, i) => (
         <div key={i} className="flex">
           <div className={`whitespace-pre-wrap font-mono  ${getServiceColorClass(entry.service)} grow`}>

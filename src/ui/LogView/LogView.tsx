@@ -7,7 +7,7 @@ import { LogFilter } from './LogFilter'
 export const LogView: React.FC = () => {
   const [enabledServices, setEnabledServices] = useState<string[]>([])
   return (
-    <div className="flex">
+    <div className="flex fixed left-0 right-0 bottom-0 top-0">
       <LogControls services={enabledServices} onSetServices={setEnabledServices} />
       <div className="grow flex flex-col">
         <LogFilter />

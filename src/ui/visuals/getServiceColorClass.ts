@@ -1,15 +1,15 @@
 const availableColors = [
-  'text-stone-200',
-  'text-orange-200',
-  'text-amber-200',
-  'text-lime-200',
-  'text-red-200',
-  'text-green-200',
-  'text-cyan-200',
-  'text-teal-200',
-  'text-sky-200',
-  'text-violet-200',
-  'text-fuchsia-200',
+  'text-stone-600',
+  'text-orange-600',
+  'text-amber-600',
+  'text-lime-600',
+  'text-red-600',
+  'text-green-600',
+  'text-cyan-600',
+  'text-teal-600',
+  'text-sky-600',
+  'text-violet-600',
+  'text-fuchsia-600',
 ]
 
 const mapping = new Map<string, string>()

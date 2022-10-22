@@ -2,6 +2,7 @@
   "name": "kulmio",
   "version": "0.3.0",
   "dependencies": {
+    "@jsonurl/jsonurl": "1.1.7",
     "ajv": "8.11.0",
     "express": "4.18.2",
     "schematar": "2.2.0",

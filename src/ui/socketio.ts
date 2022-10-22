@@ -3,7 +3,7 @@ import { Socket, io } from 'socket.io-client'
 
 import { ClientToServerEvents, ServerToClientEvents } from '../common/events'
 
-const socketUrl = decodeURIComponent(document.location.search.match(/server=(.+)/)?.[1] || '')
+const socketUrl = decodeURIComponent(document.location.search.match(/server=([^&]+)/)?.[1] || '')
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(socketUrl)
 
@@ -19,5 +19,5 @@ export function useSocketEventHandler<T extends keyof ServerToClientEvents>(
     return () => {
       socket.off(eventType, handlerInstance)
     }
-  }, [])
+  }, [eventType, handler])
 }

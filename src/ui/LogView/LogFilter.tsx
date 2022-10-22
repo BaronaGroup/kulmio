@@ -1,8 +1,8 @@
 import { FilterType, useAppState } from '../appState'
 
 export const LogFilter: React.FC = () => {
-  const [filterText, setFilterText] = useAppState('logView.filter.text')
-  const [type, setType] = useAppState('logView.filter.type')
+  const [filterText, setFilterText] = useAppState('logView.filterText')
+  const [type, setType] = useAppState('logView.filterType')
   return (
     <div className="bg-slate-200 p-2  flex space-x-2">
       <div>Filter</div>
@@ -10,6 +10,7 @@ export const LogFilter: React.FC = () => {
       <div>
         <select className="bg-slate-200" value={type} onChange={(e) => setType(e.target.value as any)}>
           <option value={FilterType.TEXT}>Text</option>
+          <option value={FilterType.TEXT_SENSITIVE}>Text (case sensitive)</option>
           <option value={FilterType.REGEX}>Regex</option>
         </select>
       </div>

@@ -1,0 +1,5 @@
+{
+  "ext": "js,jsx,json,ts,tsx",
+  "delay": "200",
+  "ignore": ["./build"]
+}

@@ -1,13 +1,15 @@
 import fs from 'fs'
 
+import Tail from '@logdna/tail-file'
 import express from 'express'
 import { Server as SocketServer } from 'socket.io'
-import Tail from 'tail-file'
+import split2 from 'split2'
 
 import { ClientToServerEvents, ServerToClientEvents } from '../../common/events'
 import { LogEvent, getEventLogFilename } from '../eventLogger'
 import ServerModel from '../ServerModel'
 import { startServices } from '../startService'
+import { subscribeToLogs, unsubscribeFromAllLogs, unsubscribeFromLogs } from './logSubscriptions'
 
 export function startUIRunner(model: ServerModel) {
   const { uiPort } = model.config
@@ -73,6 +75,18 @@ export function startUIRunner(model: ServerModel) {
         model
       )
     })
+
+    client.on('subscribeToLogs', async ({ service, id }) => {
+      subscribeToLogs(client, model, service, id)
+    })
+
+    client.on('unsubscribeFromLogs', async ({ id }) => {
+      unsubscribeFromLogs(id)
+    })
+
+    client.on('disconnect', () => {
+      unsubscribeFromAllLogs(client)
+    })
   })
   const eventLog = getEventLogFilename(model.config)
   if (!fs.existsSync(eventLog)) {
@@ -80,7 +94,20 @@ export function startUIRunner(model: ServerModel) {
   }
 
   const tail = new Tail(eventLog)
-  tail.on('line', (line) => {
+  tail
+    .on('tail_error', (err) => {
+      console.error('TailFile had an error!', err)
+      throw err
+    })
+    .start()
+    .catch((err) => {
+      console.error('Cannot start.  Does the file exist?', err)
+      throw err
+    })
+
+  // Data won't start flowing until piping
+
+  tail.pipe(split2()).on('data', (line) => {
     if (!line) return
     const lineData: LogEvent = JSON.parse(line)
     switch (lineData.type) {
@@ -89,5 +116,4 @@ export function startUIRunner(model: ServerModel) {
         break
     }
   })
-  tail.start()
 }

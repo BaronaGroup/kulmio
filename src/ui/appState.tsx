@@ -17,6 +17,7 @@ export enum TopLevelView {
 
 export enum FilterType {
   TEXT = 'TEXT',
+  TEXT_SENSITIVE = 'TEXT_SENSITIVE',
   REGEX = 'REGEX',
 }
 
@@ -42,12 +43,8 @@ const appStateSchema = z.object({
       pausedAt: z.string().optional(),
       numberOfLines: z.number().default(500),
       activeServices: z.array(z.string()).default([]),
-      filter: z
-        .object({
-          text: z.string().default(''),
-          type: z.nativeEnum(FilterType).default(FilterType.TEXT),
-        })
-        .default({}),
+      filterText: z.string().default(''),
+      filterType: z.nativeEnum(FilterType).default(FilterType.TEXT),
     })
     .default({}),
 })
@@ -67,14 +64,18 @@ interface Ctx {
 
 const context = React.createContext<Ctx>(null as any)
 
-const urlRegex = /(?<=[&?]state=)([^&]+)/
+const urlRegex = /(?<=#state=)([^&]+)/
 
 export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const initialState = useMemo<AppState>(() => {
     const data = (() => {
-      const searchParam = document.location.search.match(urlRegex)
-      if (searchParam && searchParam[1]) {
-        return JsonURL.parse(searchParam[1], { AQF: true })
+      const hashParam = document.location.hash.match(urlRegex)
+      if (hashParam && hashParam[1]) {
+        try {
+          return JsonURL.parse(hashParam[1], { AQF: true })
+        } catch (e) {
+          console.warn(e)
+        }
       }
       return JSON.parse(localStorage.getItem(localStorageName) || '{}')
     })()
@@ -94,13 +95,14 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   useEffect(() => {
     localStorage.setItem(localStorageName, JSON.stringify(state))
-    const searchParam = document.location.search.match(urlRegex)
+    const searchParam = document.location.search.match(urlRegex)?.[0]
     const newParam = JsonURL.stringify(state, { AQF: true })
     const url = document.location.href
-    if (searchParam && newParam && newParam !== searchParam[0]) {
+    if (!newParam) return
+    if (!searchParam) {
+      history.pushState({}, '', url + '#state=' + newParam)
+    } else if (newParam !== searchParam[0]) {
       history.pushState({}, '', url.replace(urlRegex, newParam))
-    } else {
-      history.pushState({}, '', url + (url.includes('?') ? '&' : '?') + 'state=' + newParam)
     }
   }, [state])
 

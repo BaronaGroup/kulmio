@@ -14,11 +14,9 @@ export const LogData: React.FC<{ scrollElement: null | Element }> = ({ scrollEle
   useEffect(() => {
     if (!scrollElement) return
     storedBottomRef.current = scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight
-    console.log(storedBottomRef.current)
   }, [lastLineId, scrollElement])
 
   useLayoutEffect(() => {
-    console.log('CH', storedBottomRef.current, !!afterList.current)
     if (storedBottomRef.current < 100 && afterList.current) {
       afterList.current.scrollIntoView({ behavior: 'smooth' })
     }

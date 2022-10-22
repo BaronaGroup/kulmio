@@ -5,8 +5,8 @@ export function getStatusBorderColorClass(status: Service['status']): string {
   switch (status) {
     case 'UNHEALTHY':
       return 'border-red-500'
-    case 'PENDING':
-      return 'border-yellow-500'
+    case 'STARTING':
+      return 'border-teal-500'
     case 'STOPPED':
     case 'STOPPING':
       return 'border-zinc-500'

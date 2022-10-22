@@ -5,8 +5,8 @@ export function getStatusTextColorClass(status: Service['status']): string {
   switch (status) {
     case 'UNHEALTHY':
       return 'text-red-500'
-    case 'PENDING':
-      return 'text-yellow-500'
+    case 'STARTING':
+      return 'text-teal-500'
     case 'STOPPED':
     case 'STOPPING':
       return 'text-zinc-500'
@@ -29,8 +29,8 @@ export function getStatusBoxClasses(status: Service['status']): string {
   switch (status) {
     case 'UNHEALTHY':
       return 'bg-red-500 text-white ' + common
-    case 'PENDING':
-      return 'bg-yellow-500 ' + common
+    case 'STARTING':
+      return 'bg-teal-500 text-white ' + common
     case 'STOPPED':
     case 'STOPPING':
       return 'bg-zinc-500 text-white ' + common

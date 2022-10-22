@@ -60,7 +60,7 @@ export default class Service {
 
   public async getStatus(): Promise<ServiceStatus> {
     const status = await this.getStatusImpl()
-    logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status })
+    await logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status })
     return status
   }
 
@@ -98,8 +98,8 @@ export default class Service {
         return 'Stopped'
       case 'UNKNOWN':
         return 'Unknown'
-      case 'PENDING':
-        return 'Being started'
+      case 'STARTING':
+        return 'Starting'
       case 'WAITING_DEPS':
         return 'Waiting for dependencies'
       default:
@@ -172,7 +172,7 @@ export default class Service {
   }
 
   public async start() {
-    logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'PENDING' })
+    await logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STARTING' })
     const command = this.config.command + ' 2>&1 | tee -a ' + this.logFile
     const child = cp.spawn('screen', ['-D', '-m', '-S', this.screenName, 'bash', '-c', command], {
       cwd: this.actualWorkDir,
@@ -215,7 +215,7 @@ export default class Service {
   }
 
   public async stop(force: boolean) {
-    logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPING' })
+    await logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPING' })
     if (!force && this.config.stopCommand) {
       cp.execSync(this.config.stopCommand, {
         cwd: this.actualWorkDir,
@@ -225,10 +225,10 @@ export default class Service {
         },
         stdio: 'inherit',
       })
-      logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPED' })
+      await logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPED' })
     } else {
       await this.kill(force)
-      logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPED' })
+      await logEvent(this.serverConfig, { type: 'STATUS_UPDATED', serviceName: this.name, status: 'STOPPED' })
     }
   }
 

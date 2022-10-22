@@ -29,7 +29,7 @@ export function startService(service: Service, workingSet: Map<string, Promise<b
             const deps = Promise.all(
               service.dependencies.map((dep) => startService(model.getService(dep), workingSet, model))
             )
-            logEvent(model.config, { type: 'STATUS_UPDATED', serviceName: service.name, status: 'WAITING_DEPS' })
+            await logEvent(model.config, { type: 'STATUS_UPDATED', serviceName: service.name, status: 'WAITING_DEPS' })
             console.log(service.name + ': Starting/waiting for dependencies')
             await deps
           }
@@ -47,7 +47,7 @@ export function startService(service: Service, workingSet: Map<string, Promise<b
         }
 
         if (running && initiallyHealthy) {
-          logEvent(model.config, {
+          await logEvent(model.config, {
             type: 'STATUS_UPDATED',
             serviceName: service.name,
             status: service.config.healthCommand ? 'RUNNING:HEALTHY' : 'RUNNING',
@@ -55,7 +55,7 @@ export function startService(service: Service, workingSet: Map<string, Promise<b
           console.log(service.name + ': Already running')
         } else {
           console.log(service.name + ': Started')
-          logEvent(model.config, {
+          await logEvent(model.config, {
             type: 'STATUS_UPDATED',
             serviceName: service.name,
             status: service.config.healthCommand ? 'RUNNING:HEALTHY' : 'RUNNING',

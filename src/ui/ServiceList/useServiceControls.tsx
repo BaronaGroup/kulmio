@@ -1,9 +1,10 @@
-import { useCallback, useContext, useMemo, useReducer, useState } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 
+import { useAppState } from '../appState'
 import { Service, dataContext } from '../data/DataContext'
 import { splitServicesToGroups } from '../utils/splitServicesToGroups'
 import { ServiceListControlPanel } from './ServiceListControlPanel'
-import { SortCriteria, sortFunctions } from './SortCriteria'
+import { sortFunctions } from './SortCriteria'
 
 export interface ServiceGroup {
   name: string
@@ -13,37 +14,23 @@ export interface ServiceGroup {
 export function useServiceControls() {
   const { services } = useContext(dataContext)
 
-  const [isGroupsEnabled, toggleGroups] = useReducer((v) => !v, true)
-  const [isListVertical, toggleVerticalList] = useReducer((v) => !v, false)
-  const [sortBy, setSortBy] = useState<SortCriteria>(SortCriteria.NAME)
+  const [sortBy] = useAppState('serviceView.sortCriteria')
+  const [groupsEnabled] = useAppState('serviceView.groupsEnabled')
 
   const groupedServices = useMemo<ServiceGroup[]>(() => splitServicesToGroups(services), [services])
   const unsortedGroups = useMemo<ServiceGroup[]>(
-    () => (isGroupsEnabled ? groupedServices : [{ name: 'All', services }]),
-    [groupedServices, services, isGroupsEnabled]
+    () => (groupsEnabled ? groupedServices : [{ name: 'All', services }]),
+    [groupedServices, services, groupsEnabled]
   )
   const sortedGroups = useMemo<ServiceGroup[]>(
     () => unsortedGroups.map((group) => ({ ...group, services: [...group.services].sort(sortFunctions[sortBy]) })),
     [sortBy, unsortedGroups]
   )
 
-  const ControlPanel = useCallback(
-    () => (
-      <ServiceListControlPanel
-        isGroupsEnabled={isGroupsEnabled}
-        toggleGroups={toggleGroups}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        isListVertical={isListVertical}
-        toggleVerticalList={toggleVerticalList}
-      />
-    ),
-    [isGroupsEnabled, sortBy, isListVertical]
-  )
+  const ControlPanel = useCallback(() => <ServiceListControlPanel />, [])
 
   return {
     serviceGroups: sortedGroups,
     ControlPanel,
-    isListVertical,
   }
 }

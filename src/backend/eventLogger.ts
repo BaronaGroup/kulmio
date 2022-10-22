@@ -11,5 +11,5 @@ export function getEventLogFilename(config: RuntimeServerConfig) {
 }
 
 export function logEvent(config: RuntimeServerConfig, event: LogEvent) {
-  fs.promises.appendFile(getEventLogFilename(config), JSON.stringify(event) + '\n', 'utf-8')
+  return fs.promises.appendFile(getEventLogFilename(config), JSON.stringify(event) + '\n', 'utf-8')
 }

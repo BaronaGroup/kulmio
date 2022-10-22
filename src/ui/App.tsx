@@ -1,20 +1,21 @@
 import './App.css'
 
-
-
+import { AppStateProvider } from './appState'
 import { DataProvider } from './data/DataContext'
 import { SelectionProvider } from './selection/SelectionContext'
 import { Views } from './Views'
 
 function App() {
   return (
-    <DataProvider>
-      <SelectionProvider>
-        <div className="container mx-auto">
-          <Views />
-        </div>
-      </SelectionProvider>
-    </DataProvider>
+    <AppStateProvider>
+      <DataProvider>
+        <SelectionProvider>
+          <div className="container mx-auto">
+            <Views />
+          </div>
+        </SelectionProvider>
+      </DataProvider>
+    </AppStateProvider>
   )
 }
 

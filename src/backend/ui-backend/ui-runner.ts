@@ -46,20 +46,25 @@ export function startUIRunner(model: ServerModel) {
     })
 
     client.on('stopServices', async ({ services, force = false }) => {
-      await services.map(async (serviceName) => {
-        const service = model.getService(serviceName)
-        const running = await service.isRunning()
-        if (running) {
-          service.stop(force)
-        }
-      })
+      await Promise.all(
+        services.map(async (serviceName) => {
+          const service = model.getService(serviceName)
+          const running = await service.isRunning()
+          if (running) {
+            service.stop(force)
+          }
+        })
+      )
     })
 
     client.on('restartServices', async ({ services }) => {
-      await services.map(async (serviceName) => {
-        const service = model.getService(serviceName)
-        await service.restart()
-      })
+      await Promise.all(
+        services.map(async (serviceName) => {
+          const service = model.getService(serviceName)
+          await service.stop(false)
+          await startServices([service], model)
+        })
+      )
     })
 
     client.on('startServices', async ({ services }) => {

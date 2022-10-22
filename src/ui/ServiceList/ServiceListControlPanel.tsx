@@ -1,3 +1,6 @@
+import { useCallback } from 'react'
+
+import { ServiceViewMode, useAppState } from '../appState'
 import { Select, SelectOption } from '../components/Select'
 import { SortCriteria } from './SortCriteria'
 
@@ -6,14 +9,17 @@ const sortOptions: Array<SelectOption<SortCriteria>> = [
   { label: 'Status', value: SortCriteria.STATUS },
 ]
 
-export const ServiceListControlPanel: React.FC<{
-  isGroupsEnabled: boolean
-  toggleGroups(): void
-  isListVertical: boolean
-  toggleVerticalList(): void
-  sortBy: SortCriteria
-  setSortBy(newCriteria: SortCriteria): void
-}> = ({ isGroupsEnabled, toggleGroups, sortBy, setSortBy, isListVertical, toggleVerticalList }) => {
+export const ServiceListControlPanel: React.FC = () => {
+  const [sortBy, setSortBy] = useAppState('serviceView.sortCriteria')
+  const [isGroupsEnabled, setGroupsEnabled] = useAppState('serviceView.groupsEnabled')
+  const [viewMode, setViewMode] = useAppState('serviceView.viewMode')
+  const toggleGroups = useCallback(() => {
+    setGroupsEnabled(!isGroupsEnabled)
+  }, [isGroupsEnabled, setGroupsEnabled])
+  const toggleVerticalList = useCallback(() => {
+    setViewMode(viewMode === ServiceViewMode.VERTICAL ? ServiceViewMode.CLUSTERED : ServiceViewMode.VERTICAL)
+  }, [setViewMode, viewMode])
+
   return (
     <div className="py-4 bg-slate-200 flex px-4 space-x-3">
       <div>
@@ -28,7 +34,8 @@ export const ServiceListControlPanel: React.FC<{
       <Separator />
       <div>
         <label>
-          <input type="checkbox" checked={isListVertical} onChange={toggleVerticalList} /> Vertical list
+          <input type="checkbox" checked={viewMode === ServiceViewMode.VERTICAL} onChange={toggleVerticalList} />{' '}
+          Vertical list
         </label>
       </div>
     </div>

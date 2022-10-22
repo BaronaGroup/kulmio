@@ -1,6 +1,6 @@
 import { Service } from '../data/DataContext'
 
-export const enum SortCriteria {
+export enum SortCriteria {
   NAME = 'NAME',
   STATUS = 'STATUS',
 }
@@ -10,7 +10,7 @@ const statusPriorities: { [K in Service['status']]: number } = {
   RUNNING: 1,
   'RUNNING:HEALTHY': 1,
   UNHEALTHY: 2,
-  PENDING: 3,
+  STARTING: 3,
   WAITING_DEPS: 4,
   STOPPING: 10,
   STOPPED: 10,

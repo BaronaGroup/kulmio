@@ -2,7 +2,7 @@ export type ServiceStatus =
   | 'RUNNING'
   | 'RUNNING:HEALTHY'
   | 'EXTERNAL'
-  | 'PENDING'
+  | 'STARTING'
   | 'WAITING_DEPS'
   | 'STOPPING'
   | 'STOPPED'

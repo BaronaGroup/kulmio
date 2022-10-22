@@ -15,6 +15,11 @@ export enum TopLevelView {
   LOGS = 'LOGS',
 }
 
+export enum FilterType {
+  TEXT = 'TEXT',
+  REGEX = 'REGEX',
+}
+
 const appStateSchema = z.object({
   global: z
     .object({
@@ -36,6 +41,13 @@ const appStateSchema = z.object({
       isTailing: z.boolean().default(true),
       pausedAt: z.string().optional(),
       numberOfLines: z.number().default(500),
+      activeServices: z.array(z.string()).default([]),
+      filter: z
+        .object({
+          text: z.string().default(''),
+          type: z.nativeEnum(FilterType).default(FilterType.TEXT),
+        })
+        .default({}),
     })
     .default({}),
 })

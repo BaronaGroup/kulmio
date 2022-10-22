@@ -1,3 +1,4 @@
+import { useAppState } from '../appState'
 import { getServiceColorClass } from '../visuals/getServiceColorClass'
 
 const exampleData = [
@@ -31,7 +32,8 @@ const exampleData = [
   },
 ]
 
-export const LogData: React.FC<{ services: string[] }> = ({ services }) => {
+export const LogData: React.FC = () => {
+  const [services] = useAppState('logView.activeServices')
   const entries = exampleData.filter((l) => services.includes(l.service))
   return (
     <div className="text-left p-4 grow">

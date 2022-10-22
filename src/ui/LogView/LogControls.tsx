@@ -4,7 +4,7 @@ import { useAppState } from '../appState'
 import { ViewSelect } from '../ViewSelect'
 import { ServiceSelection } from './ServiceSelection'
 
-export const LogControls: React.FC<{ services: string[]; onSetServices(services: string[]): void }> = (props) => {
+export const LogControls: React.FC = () => {
   const [isTailing, setTailing] = useAppState('logView.isTailing')
   const [pausedAt, setPausedAt] = useAppState('logView.pausedAt')
   const [numberOfLines, setNumberOfLines] = useAppState('logView.numberOfLines')
@@ -41,7 +41,7 @@ export const LogControls: React.FC<{ services: string[]; onSetServices(services:
       <hr />
       Services
       <div className={'flex-shrink overflow-y-auto'}>
-        <ServiceSelection {...props} />
+        <ServiceSelection />
       </div>
     </div>
   )

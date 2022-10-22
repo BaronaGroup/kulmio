@@ -12,7 +12,7 @@ export type PathOf<T> =
       ? {
           [K in Exclude<keyof T, symbol>]: symbol extends K
             ? never
-            : T[K] extends string | Date | number | boolean | null | undefined
+            : T[K] extends string | Date | number | boolean | null | undefined | any[]
             ? never
             : `${K}.${PathOf<T[K]>}`
         }[Exclude<keyof T, symbol>]

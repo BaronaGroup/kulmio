@@ -1,14 +1,13 @@
 import React, { useCallback, useContext, useMemo } from 'react'
 
+import { useAppState } from '../appState'
 import { dataContext } from '../data/DataContext'
 import { sortFunctions } from '../ServiceList/SortCriteria'
 import { splitServicesToGroups } from '../utils/splitServicesToGroups'
 import { getServiceColorClass } from '../visuals/getServiceColorClass'
 
-export const ServiceSelection: React.FC<{ services: string[]; onSetServices(services: string[]): void }> = ({
-  services: checked,
-  onSetServices: setChecked,
-}) => {
+export const ServiceSelection: React.FC = () => {
+  const [checked, setChecked] = useAppState('logView.activeServices')
   const { services } = useContext(dataContext)
   const groups = useMemo(() => {
     return splitServicesToGroups(services).map((s) => ({ ...s, services: s.services.sort(sortFunctions.NAME) }))

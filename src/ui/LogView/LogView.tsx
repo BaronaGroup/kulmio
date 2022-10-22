@@ -1,17 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { LogControls } from './LogControls'
 import { LogData } from './LogData'
 import { LogFilter } from './LogFilter'
 
 export const LogView: React.FC = () => {
-  const [enabledServices, setEnabledServices] = useState<string[]>([])
   return (
     <div className="flex fixed left-0 right-0 bottom-0 top-0">
-      <LogControls services={enabledServices} onSetServices={setEnabledServices} />
+      <LogControls />
       <div className="grow flex flex-col">
         <LogFilter />
-        <LogData services={enabledServices} />
+        <LogData />
       </div>
     </div>
   )

@@ -2,6 +2,7 @@ import React from 'react'
 
 import { LogControls } from './LogControls'
 import { LogData } from './LogData'
+import { LogDataProvider } from './LogDataProvider'
 import { LogFilter } from './LogFilter'
 
 export const LogView: React.FC = () => {
@@ -10,7 +11,9 @@ export const LogView: React.FC = () => {
       <LogControls />
       <div className="grow flex flex-col">
         <LogFilter />
-        <LogData />
+        <LogDataProvider>
+          <LogData />
+        </LogDataProvider>
       </div>
     </div>
   )

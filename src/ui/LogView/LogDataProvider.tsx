@@ -113,19 +113,26 @@ function figureOutTimestamp(events: LogEvent[], nearIndex: number) {
   return 0
 }
 
-const regexpCache = memoize((filterText: string) => new RegExp(filterText))
+const regexpCache = memoize((filterText: string) => new RegExp(filterText, 'gi'))
 
-const filterImpls: Record<FilterType, (event: LogEvent, filterText: string) => boolean> = {
+const filterImpls: Record<FilterType, (event: LogEvent, filterText: string) => boolean | LogEvent> = {
   [FilterType.TEXT]: (event, filterText) => event.line.toLowerCase().includes(filterText.toString()),
   [FilterType.TEXT_SENSITIVE]: (event, filterText) => event.line.includes(filterText),
   [FilterType.REGEX]: (event, filterText) => Boolean(event.line.match(regexpCache(filterText))),
+  [FilterType.HIGHLIGHT]: (event, filterText) => ({
+    ...event,
+    line: event.line.replace(regexpCache(filterText), (match) => `\u001b[33;1m\u001b[41m${match}\u001b[0m`),
+  }),
 }
 
 function applyFilter(lines: LogEvent[], filterText: string, filterType: FilterType) {
   if (!filterText) return lines
 
   const filter = filterImpls[filterType]
-  const pass1 = lines.map((line) => (filter(line, filterText) ? line : null))
+  const pass1 = lines.map((line) => {
+    const result = filter(line, filterText)
+    return typeof result === 'boolean' ? (result ? line : null) : result
+  })
 
   const output: LogEvent[] = []
   let filteredNow = 0

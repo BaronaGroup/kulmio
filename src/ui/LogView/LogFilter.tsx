@@ -12,6 +12,7 @@ export const LogFilter: React.FC = () => {
           <option value={FilterType.TEXT}>Text</option>
           <option value={FilterType.TEXT_SENSITIVE}>Text (case sensitive)</option>
           <option value={FilterType.REGEX}>Regex</option>
+          <option value={FilterType.HIGHLIGHT}>Highlight</option>
         </select>
       </div>
     </div>

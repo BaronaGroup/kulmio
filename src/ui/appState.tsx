@@ -19,6 +19,7 @@ export enum FilterType {
   TEXT = 'TEXT',
   TEXT_SENSITIVE = 'TEXT_SENSITIVE',
   REGEX = 'REGEX',
+  HIGHLIGHT = 'HIGHLIGHT',
 }
 
 const appStateSchema = z.object({

@@ -1,11 +1,29 @@
 import Ansi from 'ansi-to-react'
-import { useContext } from 'react'
+import { useContext, useEffect, useLayoutEffect, useRef } from 'react'
 
+import { LogEvent } from '../../common/events'
 import { getServiceColorClass } from '../visuals/getServiceColorClass'
 import { logDataContext } from './LogDataProvider'
 
-export const LogData: React.FC = () => {
+export const LogData: React.FC<{ scrollElement: null | Element }> = ({ scrollElement }) => {
   const { logLines } = useContext(logDataContext)
+
+  const storedBottomRef = useRef(0)
+  const lastLineId = getLineId(logLines[logLines.length - 1])
+  const afterList = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!scrollElement) return
+    storedBottomRef.current = scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight
+    console.log(storedBottomRef.current)
+  }, [lastLineId, scrollElement])
+
+  useLayoutEffect(() => {
+    console.log('CH', storedBottomRef.current, !!afterList.current)
+    if (storedBottomRef.current < 100 && afterList.current) {
+      afterList.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  })
+
   return (
     <div className="text-left p-4 grow">
       {logLines.map((entry) => (
@@ -18,6 +36,13 @@ export const LogData: React.FC = () => {
         </div>
       ))}
       {!logLines.length && <p>No log entries.</p>}
+      <div className={'h-[16px]'} />
+      <div ref={afterList} />
     </div>
   )
+}
+
+function getLineId(line: LogEvent | undefined) {
+  if (!line) return 'none'
+  return `${line.service}-${line.offset}-${line.timestamp}`
 }

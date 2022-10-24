@@ -6,7 +6,6 @@ import { ServiceSelection } from './ServiceSelection'
 
 export const LogControls: React.FC = () => {
   const [isTailing, setTailing] = useAppState('logView.isTailing')
-  const [pausedAt, setPausedAt] = useAppState('logView.pausedAt')
   const [numberOfLines, setNumberOfLines] = useAppState('logView.numberOfLines')
 
   const toggleTailing = useCallback(() => {
@@ -33,11 +32,6 @@ export const LogControls: React.FC = () => {
           <input type="radio" name="mode" checked={!isTailing} onChange={toggleTailing} /> Paused
         </label>
       </div>
-      {!isTailing && (
-        <div>
-          Paused at <input type={'text'} value={pausedAt ?? ''} onChange={(e) => setPausedAt(e.target.value)} />
-        </div>
-      )}
       <hr />
       Services
       <div className={'flex-shrink overflow-y-auto'}>

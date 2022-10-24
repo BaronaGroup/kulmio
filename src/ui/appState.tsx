@@ -41,7 +41,6 @@ const appStateSchema = z.object({
   logView: z
     .object({
       isTailing: z.boolean().default(true),
-      pausedAt: z.string().optional(),
       numberOfLines: z.number().default(500),
       activeServices: z.array(z.string()).default([]),
       filterText: z.string().default(''),

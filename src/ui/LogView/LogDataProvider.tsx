@@ -114,12 +114,13 @@ function figureOutTimestamp(events: LogEvent[], nearIndex: number) {
 }
 
 const matchAnyString = /.{0}/
+const matchNothing = /^.^/
 
 const filterImpls: Record<FilterType, (filterText: string) => { filterRegex: RegExp; highlightRegex?: RegExp }> = {
   [FilterType.TEXT]: (filterText) => ({ filterRegex: new RegExp(escapeRegExp(filterText), 'gi') }),
   [FilterType.TEXT_SENSITIVE]: (filterText) => ({ filterRegex: new RegExp(escapeRegExp(filterText), 'g') }),
   [FilterType.REGEX]: (filterText) => ({
-    filterRegex: filterText.startsWith('/') ? constructFlaggedRegexp(filterText) : new RegExp(filterText, 'gi'),
+    filterRegex: constructRegexp(filterText, 'gi'),
   }),
   [FilterType.HIGHLIGHT]: (filterText) => ({
     filterRegex: matchAnyString,
@@ -127,14 +128,18 @@ const filterImpls: Record<FilterType, (filterText: string) => { filterRegex: Reg
   }),
 }
 
-function constructFlaggedRegexp(input: string) {
+function constructRegexp(input: string, suggestedFlags: string) {
   try {
-    const match = input.match(/\/(.+)\/(\w+)$/)
-    if (!match) return new RegExp(input, 'gi')
+    const match = input.match(/^\/(.+)\/(\w+)$/)
+    if (!match) return new RegExp(input, suggestedFlags)
 
     return new RegExp(match[1], match[2])
   } catch (err) {
-    return new RegExp(input, 'gi')
+    try {
+      return new RegExp(input, suggestedFlags)
+    } catch (err) {
+      return matchNothing
+    }
   }
 }
 

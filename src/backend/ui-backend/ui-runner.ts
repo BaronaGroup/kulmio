@@ -10,6 +10,7 @@ import { LogEvent, getEventLogFilename } from '../eventLogger'
 import ServerModel from '../ServerModel'
 import { startServices } from '../startService'
 import { subscribeToLogs, unsubscribeFromAllLogs, unsubscribeFromLogs } from './logSubscriptions'
+import { sendLogLines } from './sendLogLines'
 
 export function startUIRunner(model: ServerModel) {
   const { uiPort } = model.config
@@ -76,8 +77,11 @@ export function startUIRunner(model: ServerModel) {
       )
     })
 
-    client.on('subscribeToLogs', async ({ service, id }) => {
+    client.on('subscribeToLogs', async ({ service, id, sendLines }) => {
       subscribeToLogs(client, model, service, id)
+      if (sendLines) {
+        sendLogLines(client, model, service, sendLines)
+      }
     })
 
     client.on('unsubscribeFromLogs', async ({ id }) => {

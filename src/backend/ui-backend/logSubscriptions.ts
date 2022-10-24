@@ -82,7 +82,7 @@ function createTail(service: string, model: ServerModel) {
 
 const timestampFinder1 = /\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d(Z|\+\d\d:\d\d)/
 const timestampFinder2 = /(\d\d)\/(\w\w\w)\/(\d\d\d\d):(\d\d):(\d\d):(\d\d) \+0000/
-function findTimestamp(line: string): number | null {
+export function findTimestamp(line: string): number | null {
   const match1 = line.match(timestampFinder1)
   if (match1?.[0]) return new Date(match1[0]).valueOf()
 

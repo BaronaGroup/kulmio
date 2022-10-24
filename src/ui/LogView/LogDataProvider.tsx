@@ -105,7 +105,7 @@ function figureOutIndex(event: LogEvent, events: LogEvent[]) {
 
 function figureOutTimestamp(events: LogEvent[], nearIndex: number) {
   for (let i = nearIndex; i >= 0; --i) {
-    if (events[i].timestamp) return events[i].timestamp
+    if (events[i]?.timestamp) return events[i].timestamp
   }
   for (let i = nearIndex + 1; i < events.length; ++i) {
     if (events[i].timestamp) return events[i].timestamp

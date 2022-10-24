@@ -95,7 +95,7 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   useEffect(() => {
     localStorage.setItem(localStorageName, JSON.stringify(state))
-    const searchParam = document.location.search.match(urlRegex)?.[0]
+    const searchParam = document.location.hash.match(urlRegex)?.[0]
     const newParam = JsonURL.stringify(state, { AQF: true })
     const url = document.location.href
     if (!newParam) return

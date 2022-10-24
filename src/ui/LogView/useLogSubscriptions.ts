@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 import { useAppState } from '../appState'
 import { dataContext } from '../data/DataContext'
 import { socket } from '../socketio'
+import { useRerender } from '../utils/useRerender'
 
 export function useLogSubscriptions() {
   const [maxLinesPerService] = useAppState('logView.numberOfLines')
@@ -14,6 +15,19 @@ export function useLogSubscriptions() {
   const allServices = useContext(dataContext).services.map((s) => s.name)
 
   const activeSubscriptions = useRef<Record<string, string | null>>({})
+  const rerender = useRerender()
+  useEffect(() => {
+    const handleDisconnect = () => {
+      activeSubscriptions.current = {}
+      socket.once('connect', () => {
+        rerender()
+      })
+    }
+    socket.on('disconnect', handleDisconnect)
+    return () => {
+      socket.off('disconnect', handleDisconnect)
+    }
+  })
 
   useEffect(() => {
     for (const service of allServices) {

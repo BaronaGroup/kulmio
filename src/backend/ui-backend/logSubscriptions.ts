@@ -63,7 +63,6 @@ function createTail(service: string, model: ServerModel) {
   let offset = fs.statSync(logFile).size
   const tail = new Tail(logFile)
   tail.pipe(split2()).on('data', (line) => {
-    console.log('line', line)
     if (!line) return
 
     const logTail = logTails.get(service)

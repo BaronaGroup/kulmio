@@ -56,25 +56,26 @@ export function unsubscribeFromAllLogs(client: Client) {
 
 function createTail(service: string, model: ServerModel) {
   // TODO: support actual offsets
-  let index = 0
   const logFile = model.getService(service).logFile
   if (!fs.existsSync(logFile)) {
     fs.writeFileSync(logFile, '', 'utf-8')
   }
+  let offset = fs.statSync(logFile).size
   const tail = new Tail(logFile)
   tail.pipe(split2()).on('data', (line) => {
     console.log('line', line)
     if (!line) return
-    const myIndex = ++index
+
     const logTail = logTails.get(service)
     if (logTail) {
       for (const sub of logTail.subscriptions) {
         sub.client.emit('newLogEvents', {
-          logEvents: [{ timestamp: findTimestamp(line) ?? new Date().valueOf(), offset: myIndex, service, line }],
+          logEvents: [{ timestamp: findTimestamp(line) ?? new Date().valueOf(), offset: offset, service, line }],
           isInitialBatch: false,
         })
       }
     }
+    offset += line.length + 1 // TODO: this may not be entirely accurate as split2 could
   })
 
   return tail

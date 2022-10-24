@@ -27,8 +27,8 @@ export async function sendLogLines(
   while (combinedBuffer.filter((x) => x === 10).length < maxLines) {
     const position = Math.max(fileSize - combinedBuffer.length - BUFFER_SIZE, 0)
 
-    await fd.read({ buffer: readBuffer, position: position })
-    combinedBuffer = Buffer.concat([readBuffer, combinedBuffer])
+    const { bytesRead } = await fd.read({ buffer: readBuffer, position: position })
+    combinedBuffer = Buffer.concat([readBuffer.subarray(0, bytesRead), combinedBuffer])
 
     if (position === 0) break
   }

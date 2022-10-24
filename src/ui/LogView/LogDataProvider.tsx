@@ -1,6 +1,6 @@
 import bs from 'binary-search'
 import produce from 'immer'
-import memoize from 'lodash/memoize'
+import escapeRegExp from 'lodash/escapeRegExp'
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { LogEvent } from '../../common/events'
@@ -113,25 +113,42 @@ function figureOutTimestamp(events: LogEvent[], nearIndex: number) {
   return 0
 }
 
-const regexpCache = memoize((filterText: string) => new RegExp(filterText, 'gi'))
+const matchAnyString = /.{0}/
 
-const filterImpls: Record<FilterType, (event: LogEvent, filterText: string) => boolean | LogEvent> = {
-  [FilterType.TEXT]: (event, filterText) => event.line.toLowerCase().includes(filterText.toString()),
-  [FilterType.TEXT_SENSITIVE]: (event, filterText) => event.line.includes(filterText),
-  [FilterType.REGEX]: (event, filterText) => Boolean(event.line.match(regexpCache(filterText))),
-  [FilterType.HIGHLIGHT]: (event, filterText) => ({
-    ...event,
-    line: event.line.replace(regexpCache(filterText), (match) => `\u001b[33;1m\u001b[41m${match}\u001b[0m`),
+const filterImpls: Record<FilterType, (filterText: string) => { filterRegex: RegExp; highlightRegex?: RegExp }> = {
+  [FilterType.TEXT]: (filterText) => ({ filterRegex: new RegExp(escapeRegExp(filterText), 'gi') }),
+  [FilterType.TEXT_SENSITIVE]: (filterText) => ({ filterRegex: new RegExp(escapeRegExp(filterText), 'g') }),
+  [FilterType.REGEX]: (filterText) => ({
+    filterRegex: filterText.startsWith('/') ? constructFlaggedRegexp(filterText) : new RegExp(filterText, 'gi'),
   }),
+  [FilterType.HIGHLIGHT]: (filterText) => ({
+    filterRegex: matchAnyString,
+    highlightRegex: new RegExp(escapeRegExp(filterText), 'gi'),
+  }),
+}
+
+function constructFlaggedRegexp(input: string) {
+  try {
+    const match = input.match(/\/(.+)\/(\w+)$/)
+    if (!match) return new RegExp(input, 'gi')
+
+    return new RegExp(match[1], match[2])
+  } catch (err) {
+    return new RegExp(input, 'gi')
+  }
 }
 
 function applyFilter(lines: LogEvent[], filterText: string, filterType: FilterType) {
   if (!filterText) return lines
 
-  const filter = filterImpls[filterType]
+  const { filterRegex, highlightRegex = filterRegex } = filterImpls[filterType](filterText)
   const pass1 = lines.map((line) => {
-    const result = filter(line, filterText)
-    return typeof result === 'boolean' ? (result ? line : null) : result
+    const isMatch = line.line.match(filterRegex)
+    if (!isMatch) return null
+    return {
+      ...line,
+      line: line.line.replace(highlightRegex, (match) => `\u001b[33;1m\u001b[41m${match}\u001b[0m`),
+    }
   })
 
   const output: LogEvent[] = []

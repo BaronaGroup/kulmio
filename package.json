@@ -90,7 +90,7 @@
       "js"
     ],
     "setupFiles": [
-      "<rootDir>/src/test/test-setup.ts"
+      "<rootDir>/src/backend/test/test-setup.ts"
     ],
     "testEnvironment": "node"
   },

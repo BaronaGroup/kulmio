@@ -7,6 +7,8 @@ RUN apt-get update && \
   apt-get autoremove --yes && \
   rm -rf /var/lib/{apt,dpkg,cache,log}/
 COPY package* ./
-RUN npm install
+COPY .npmrc .
+RUN npm install --ignore-scripts
 COPY . .
+RUN npm run prepare
 CMD npm run test-local

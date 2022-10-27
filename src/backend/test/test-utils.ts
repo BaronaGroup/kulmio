@@ -1,9 +1,9 @@
-import { TestServerAPI, startServer, MetaCommand } from './test-server'
-import { WSClientToServerCommand } from './ws-commands'
-import { ServiceConfig } from '../config'
 import { runWithArgs } from '../app'
-import { delay } from '../utils/delay'
+import { ServiceConfig } from '../config'
 import ServerModel from '../ServerModel'
+import { delay } from '../utils/delay'
+import { MetaCommand, TestServerAPI, startServer } from './test-server'
+import { WSClientToServerCommand } from './ws-commands'
 
 export function createTestService(
   name: string,
@@ -12,7 +12,7 @@ export function createTestService(
 ): ServiceConfig {
   return {
     name,
-    workDir: __dirname + '/../../build/src/test/test-app',
+    workDir: __dirname + '/../../../build/src/backend/test/test-app',
     command: 'node test-app',
     ...(customizations || {}),
     env: {
@@ -118,6 +118,6 @@ export function runKulmio(configFile: string, command: string, services: string[
     command,
     services,
     extraArgs: [],
-    model: new ServerModel(configFile)
+    model: new ServerModel(configFile),
   })
 }

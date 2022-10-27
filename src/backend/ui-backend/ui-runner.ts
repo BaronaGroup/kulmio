@@ -1,4 +1,5 @@
 import fs from 'fs'
+import path from 'path'
 
 import Tail from '@logdna/tail-file'
 import express from 'express'
@@ -21,9 +22,8 @@ export function startUIRunner(model: ServerModel) {
 
   const app = express()
 
-  app.get('/', (_req, res) => {
-    res.send('Hello World!')
-  })
+  app.use(express.static(path.join(__dirname, '../../../build/ui')))
+  app.use(express.static(path.join(__dirname, '../../../ui')))
 
   const server = app.listen(uiPort, '127.0.0.1', () => {
     console.log(`Kulmio UI at http://127.0.0.1:${uiPort}`)

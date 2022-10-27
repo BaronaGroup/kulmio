@@ -1,12 +1,13 @@
 import path from 'path'
-import { createTestService, createTestServerHelper, until, runKulmio } from '../test-utils'
-import { Config } from '../../config'
+
+import { AnyConfig } from '../../config'
+import { createTestServerHelper, createTestService, runKulmio, until } from '../test-utils'
 
 const wsPort = 10000
 
 const testSetName = path.basename(__filename, '.ts')
 
-export const kulmioConfig: Config = {
+export const kulmioConfig: AnyConfig = {
   schema: 'V1',
   config: {
     screenSuffix: testSetName,
@@ -28,7 +29,7 @@ describe(testSetName, () => {
   beforeEach(testUtil.resetHistory)
   afterEach(testUtil.stopAllServices)
 
-  it('is possible to start individual services', async function() {
+  it('is possible to start individual services', async function () {
     jest.setTimeout(10000)
     await runKulmio(__filename, 'start', ['test1'])
 
@@ -36,7 +37,7 @@ describe(testSetName, () => {
     testUtil.verifyConnections([['test1']])
   })
 
-  it('is possible to start services with explicit start', async function() {
+  it('is possible to start services with explicit start', async function () {
     jest.setTimeout(10000)
     await runKulmio(__filename, 'start', ['testExplicit'])
 
@@ -44,7 +45,7 @@ describe(testSetName, () => {
     testUtil.verifyConnections([['testExplicit']])
   })
 
-  it('is possible to start multiple services', async function() {
+  it('is possible to start multiple services', async function () {
     jest.setTimeout(10000)
     await runKulmio(__filename, 'start', ['test1', 'test3'])
 
@@ -53,7 +54,7 @@ describe(testSetName, () => {
     testUtil.verifyConnections([['test1', 'test3']])
   })
 
-  it('by default starts all services (except those with explicit start)', async function() {
+  it('by default starts all services (except those with explicit start)', async function () {
     jest.setTimeout(10000)
     await runKulmio(__filename, 'start')
 

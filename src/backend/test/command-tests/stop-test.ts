@@ -1,12 +1,13 @@
 import path from 'path'
-import { createTestService, createTestServerHelper, runKulmio, until } from '../test-utils'
-import { Config } from '../../config'
+
+import { AnyConfig } from '../../config'
+import { createTestServerHelper, createTestService, runKulmio, until } from '../test-utils'
 
 const wsPort = 10001
 
 const testSetName = path.basename(__filename, '.ts')
 
-export const kulmioConfig: Config = {
+export const kulmioConfig: AnyConfig = {
   schema: 'V1',
   config: {
     screenSuffix: testSetName,
@@ -24,13 +25,13 @@ describe(testSetName, () => {
   beforeAll(testUtil.setup)
   afterAll(testUtil.destroy)
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     await runKulmio(__filename, 'start')
     await testUtil.waitForServices(['test1', 'test2', 'test3'])
     testUtil.resetHistory()
   })
 
-  it('is possible to stop individual services', async function() {
+  it('is possible to stop individual services', async function () {
     jest.setTimeout(10000)
     await runKulmio(__filename, 'stop', ['test2'])
     await until(() => !testUtil.serviceIsRunning('test2'))

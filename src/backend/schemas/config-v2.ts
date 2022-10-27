@@ -1,5 +1,7 @@
-import { Schema, Complex } from 'schematar'
-import { configFieldsV1 /*, serviceFieldsV1*/ } from './config-v1'
+import { Complex, Schema } from 'schematar'
+
+import { configFieldsV1 } from './config-v1'
+
 export const configTokensV2 = [
   'V2',
   'https://raw.githubusercontent.com/BaronaGroup/kulmio/master/generated/json-schemas/config-v2.json',

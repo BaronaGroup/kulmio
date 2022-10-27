@@ -13,8 +13,12 @@ import { subscribeToLogs, unsubscribeFromAllLogs, unsubscribeFromLogs } from './
 import { sendLogLines } from './sendLogLines'
 
 export function startUIRunner(model: ServerModel) {
+  if (!('uiPort' in model.config) || !model.config.uiPort) {
+    throw new Error('Configuration does not specify UI port')
+  }
+  model.config.uiPort
   const { uiPort } = model.config
-  if (!uiPort) throw new Error('Configuration does not specify UI port')
+
   const app = express()
 
   app.get('/', (_req, res) => {

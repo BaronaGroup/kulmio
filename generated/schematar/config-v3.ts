@@ -3,13 +3,14 @@
 // tslint:disable
 /* eslint-disable */
 // @ts-ignore -- ignore possibly unused type parameters
-export interface ConfigV1Base<IDType, DateType> {
-  schema: 'V1' | 'https://raw.githubusercontent.com/BaronaGroup/kulmio/master/generated/json-schemas/config-v1.json'
+export interface ConfigV3Base<IDType, DateType> {
+  schema: 'V3' | 'https://raw.githubusercontent.com/BaronaGroup/kulmio/master/generated/json-schemas/config-v3.json'
   config?: {
     envDirectories?: Array<string>
     envFiles?: Array<string>
     baseDir?: string
     screenSuffix?: string
+    uiPort?: number
   }
   services: Array<{
     name: string
@@ -29,7 +30,12 @@ export interface ConfigV1Base<IDType, DateType> {
     excludeFromAll?: boolean
     groups?: Array<string>
     execPrefix?: string
+    logParser?: {
+      unhealthy?: string
+      possiblyHealthy?: string
+      timestamp?: string
+    }
   }>
   extends?: Array<string>
 }
-export const configV1Hash = '5839c6485c1b9e36dbb5cde4537ffd3b3c43179cb6d43d479d69e9dbeff76c64'
+export const configV3Hash = 'cd105a3be6063c0ef00d3e9b52e55ebe21f56f0ea7904e0a2963c5c02762003e'

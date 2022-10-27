@@ -5,7 +5,6 @@ export const configFieldsV1 = {
   envFiles: { type: [String], optional: true },
   baseDir: { type: String, optional: true },
   screenSuffix: { type: String, optional: true },
-  uiPort: { type: Number, optional: true },
 }
 export const serviceFieldsV1 = {
   name: String,

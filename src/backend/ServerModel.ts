@@ -1,16 +1,16 @@
 import path from 'path'
 
-import { Config, ServiceConfig, validateConfig } from './config'
+import { LatestConfig, ServerConfig, ServiceConfig, validateConfig } from './config'
+import { AnyConfig } from './config'
 import Service from './Service'
-import { Existing } from './types'
 
-export type ConfigFile = Config | { default: Config } | { kulmio: Config } | { kulmioConfig: Config }
+export type ConfigFile = AnyConfig | { default: AnyConfig } | { kulmio: AnyConfig } | { kulmioConfig: AnyConfig }
 
-export type RuntimeServerConfig = Omit<Existing<Config['config']>, 'baseDir'> & {
+export type RuntimeServerConfig = Omit<ServerConfig, 'baseDir'> & {
   baseDir: string
 }
 
-export type RuntimeConfig = Config & {
+export type RuntimeConfig = LatestConfig & {
   runtime: RuntimeServerConfig
 }
 
@@ -51,17 +51,18 @@ export default class ServerModel {
 function loadConfigFile(workingPath: string, filename: string): ConfigServicePair[] {
   process.env.KULMIO_MAX_CONFIG_VERSION = '3'
   const configPath = path.resolve(workingPath, filename)
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const rawConfig = require(configPath) as ConfigFile as any
-  const config: Config = rawConfig.kulmioConfig || rawConfig.kulmio || rawConfig.default || rawConfig
+  const config: AnyConfig = rawConfig.kulmioConfig || rawConfig.kulmio || rawConfig.default || rawConfig
 
   validateConfig(config)
 
   const baseDir = (config.config && config.config.baseDir) || path.dirname(configPath)
   const configObj = config.config || {}
 
-  const output = config.services.map((serviceConfig) => ({
+  const output = config.services.map<ConfigServicePair>((serviceConfig) => ({
     serviceConfig,
-    systemConfig: { ...config, runtime: { ...configObj, baseDir } },
+    systemConfig: { ...config, runtime: { ...configObj, baseDir }, schema: 'V3' },
   }))
   for (const extended of config.extends || []) {
     for (const service of loadConfigFile(path.dirname(configPath), extended)) {

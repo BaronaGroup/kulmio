@@ -4,11 +4,14 @@ import { createJSONSchema, createTypescriptInterfaceDefinition } from 'schematar
 
 import v1Schema from './schemas/config-v1'
 import v2Schema from './schemas/config-v2'
+import v3Schema from './schemas/config-v3'
+
 import mkdirp = require('mkdirp')
 
 const schemas = [
   { name: 'config-v1', schema: v1Schema, interface: 'ConfigV1' },
   { name: 'config-v2', schema: v2Schema, interface: 'ConfigV2' },
+  { name: 'config-v3', schema: v3Schema, interface: 'ConfigV3' },
 ]
 
 const interfaceDir = __dirname + '/../../generated/schematar',

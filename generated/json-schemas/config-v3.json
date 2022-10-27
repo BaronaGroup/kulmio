@@ -5,8 +5,8 @@
     "schema": {
       "type": "string",
       "enum": [
-        "V1",
-        "https://raw.githubusercontent.com/BaronaGroup/kulmio/master/generated/json-schemas/config-v1.json"
+        "V3",
+        "https://raw.githubusercontent.com/BaronaGroup/kulmio/master/generated/json-schemas/config-v3.json"
       ]
     },
     "config": {
@@ -30,6 +30,9 @@
         },
         "screenSuffix": {
           "type": "string"
+        },
+        "uiPort": {
+          "type": "number"
         }
       },
       "additionalProperties": false
@@ -103,6 +106,22 @@
           },
           "execPrefix": {
             "type": "string"
+          },
+          "logParser": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "unhealthy": {
+                "type": "string"
+              },
+              "possiblyHealthy": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           }
         },
         "additionalProperties": false

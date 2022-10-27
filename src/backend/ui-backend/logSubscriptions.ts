@@ -29,7 +29,6 @@ export function subscribeToLogs(client: Client, model: ServerModel, service: str
 
   const tail = createTail(service, model)
   logTails.set(service, { service, tail, subscriptions: [{ client, id }] })
-  console.log('Starting tailing: ' + service)
   tail.start()
 }
 
@@ -37,7 +36,6 @@ export function unsubscribeFromLogs(id: string) {
   const logTail = Array.from(logTails.values()).find((lt) => lt.subscriptions.some((sub) => sub.id === id))
   if (!logTail) return
   if (logTail.subscriptions.length === 1) {
-    console.log('Stopping tailing: ' + logTail.service)
     logTail.tail.quit()
     logTails.delete(logTail.service)
   }

@@ -28,7 +28,7 @@
     "@types/mkdirp": "1.0.2",
     "@types/node": "18.11.2",
     "@types/react": "18.0.21",
-    "@types/react-dom": "18.0.6",
+    "@types/react-dom": "18.0.10",
     "@types/split2": "3.2.1",
     "@types/uuid": "8.3.4",
     "@types/websocket": "1.0.5",

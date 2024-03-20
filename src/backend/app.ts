@@ -9,8 +9,10 @@ import { startUIRunner } from './ui-backend/ui-runner'
 import flatten from './utils/flatten'
 
 let path = '../package.json'
+// eslint-disable-next-line no-constant-condition
 while (true) {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const p = require(path) // tslint:disable-line
     ;(global as any).kulmioVersion = p.version
     break
@@ -120,6 +122,7 @@ if (!process.env.KULMIO_API_MODE) {
 }
 
 function parseCommandLine() {
+  // eslint-disable-next-line prefer-const
   let [, , configFile, ...rest] = process.argv
   if ((isValidCommand(configFile) || !looksLikeConfigFile(configFile)) && process.env.KULMIO_CONFIG) {
     rest.unshift(configFile)

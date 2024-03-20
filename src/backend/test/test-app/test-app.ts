@@ -28,6 +28,7 @@ client.on('connect', (connection) => {
       switch (data.command) {
         case 'exit':
           connection.close()
+        // eslint-disable-next-line no-fallthrough
         default:
           console.log('Invalid command', data.command)
           sendCommand({ command: 'error', message: 'Invalid command: ' + data.command })

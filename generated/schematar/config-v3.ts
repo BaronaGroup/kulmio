@@ -3,7 +3,8 @@
 // tslint:disable
 /* eslint-disable */
 // @ts-ignore -- ignore possibly unused type parameters
-export interface ConfigV3Base<IDType, DateType> {
+export interface ConfigV3Base<IDType, DateType>
+{
   schema: 'V3' | 'https://raw.githubusercontent.com/BaronaGroup/kulmio/master/generated/json-schemas/config-v3.json'
   config?: {
     envDirectories?: Array<string>

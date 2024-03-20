@@ -69,7 +69,7 @@
     "test-local": "jest --forceExit",
     "test": "npm run build && docker build --tag kulmio:test . && docker run --rm --init kulmio:test",
     "lint": "eslint . --max-warnings=0 --ext=.ts,.tsx,.js",
-    "prettier": "find src -name '*.ts' -or -name '*.tsx' | xargs prettier --write",
+    "prettier": "prettier --check .",
     "pre-commit-eslint-and-prettier": "pre-commit-eslint-and-prettier",
     "dev": "vite",
     "tsc": "tsc",

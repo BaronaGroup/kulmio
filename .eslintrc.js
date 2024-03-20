@@ -1,8 +1,16 @@
-module.exports = {
+// @ts-check
+
+/** @type {import('eslint').Linter.Config} */
+const config = {
   env: {
     browser: true,
     es2021: true,
     node: true,
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
   extends: [
     'eslint:recommended',
@@ -26,3 +34,5 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
   },
 }
+
+module.exports = config

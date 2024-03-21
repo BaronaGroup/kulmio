@@ -44,7 +44,7 @@
     "mkdirp": "1.0.4",
     "nodemon": "2.0.22",
     "npm-release": "1.0.0",
-    "postcss": "8.4.37",
+    "postcss": "8.4.38",
     "pre-commit": "1.2.2",
     "pre-commit-eslint-and-prettier": "1.0.0",
     "prettier": "2.7.1",

@@ -38,7 +38,11 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "command", "workDir"],
+        "required": [
+          "name",
+          "command",
+          "workDir"
+        ],
         "properties": {
           "name": {
             "type": "string"
@@ -115,5 +119,8 @@
       }
     }
   },
-  "required": ["schema", "services"]
+  "required": [
+    "schema",
+    "services"
+  ]
 }

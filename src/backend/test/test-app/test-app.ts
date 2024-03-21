@@ -1,19 +1,20 @@
 import { client as WebSocketClient } from 'websocket'
-import { WSServerToClientCommand, WSClientToServerCommand } from '../ws-commands'
+
+import { WSClientToServerCommand, WSServerToClientCommand } from '../ws-commands'
 
 const wsServerPort = process.env.WS_SERVER_PORT,
   clientId = process.env.CLIENT_ID || 'unspecified'
 
 const client = new WebSocketClient()
 
-client.on('connectFailed', err => {
+client.on('connectFailed', (err) => {
   console.log('Connection failed: ' + err)
 })
 
-client.on('connect', connection => {
+client.on('connect', (connection) => {
   console.log('Connected')
   sendCommand({ command: 'hello', clientId })
-  connection.on('error', err => {
+  connection.on('error', (err) => {
     console.log('Connection error: ' + err)
   })
 
@@ -21,12 +22,13 @@ client.on('connect', connection => {
     console.log('Connection closed')
   })
 
-  connection.on('message', message => {
+  connection.on('message', (message) => {
     if (message.type === 'utf8') {
       const data = JSON.parse(message.utf8Data as string) as WSServerToClientCommand
       switch (data.command) {
         case 'exit':
           connection.close()
+        // eslint-disable-next-line no-fallthrough
         default:
           console.log('Invalid command', data.command)
           sendCommand({ command: 'error', message: 'Invalid command: ' + data.command })

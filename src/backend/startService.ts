@@ -13,6 +13,8 @@ export function startService(service: Service, workingSet: Map<string, Promise<b
   if (promise) return promise
   workingSet.set(
     service.name,
+    // TODO: this should not be async, maybe there is a cleaner way to do this
+    // eslint-disable-next-line no-async-promise-executor
     new Promise(async (resolve, reject) => {
       try {
         const running = await service.isRunning()

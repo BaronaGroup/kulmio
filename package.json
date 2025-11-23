@@ -22,7 +22,7 @@
   },
   "repository": "BaronaGroup/kulmio",
   "devDependencies": {
-    "@types/express": "4.17.21",
+    "@types/express": "4.17.25",
     "@types/jest": "29.5.14",
     "@types/lodash": "4.17.13",
     "@types/mkdirp": "1.0.2",

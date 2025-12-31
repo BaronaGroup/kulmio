@@ -59,7 +59,7 @@
     "typescript": "5.9.3",
     "vite": "5.4.21",
     "websocket": "1.0.35",
-    "zod": "3.22.4"
+    "zod": "3.25.76"
   },
   "bin": "./bin/kulmio",
   "scripts": {

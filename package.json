@@ -47,7 +47,7 @@
     "postcss": "8.5.6",
     "pre-commit": "1.2.2",
     "pre-commit-eslint-and-prettier": "1.0.0",
-    "prettier": "2.8.8",
+    "prettier": "3.8.1",
     "prettier-plugin-import-sort": "0.0.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",

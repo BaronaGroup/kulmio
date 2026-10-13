@@ -2,7 +2,7 @@
   "name": "kulmio",
   "version": "0.4.0",
   "dependencies": {
-    "@jsonurl/jsonurl": "1.1.7",
+    "@jsonurl/jsonurl": "1.1.8",
     "@logdna/tail-file": "3.0.0",
     "ajv": "8.12.0",
     "ansi-to-react": "6.1.6",
